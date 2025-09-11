@@ -23,16 +23,15 @@ require_once 'helpers/functions.php';
     <div class="background-image"></div>
     
     <!-- Audio Player -->
-    <audio id="backgroundMusic" loop>
-        <source src="assets/audio/piano-melody.mp3" type="audio/mpeg">
-        <source src="assets/audio/piano-melody.ogg" type="audio/ogg">
+    <audio id="backgroundMusic" loop preload="auto">
+        <source src="assets/audio/musica.mp3" type="audio/mpeg">
         Seu navegador não suporta o elemento de áudio.
     </audio>
     
     <!-- Main Container -->
     <div class="container-fluid d-flex align-items-center justify-content-center min-vh-100">
-        <div class="row w-100">
-            <div class="col-12 d-flex justify-content-center">
+        <div class="row w-100 d-flex justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8 col-xl-4 d-flex justify-content-center">
                 <div class="card main-card shadow-lg">
                     <div class="card-body text-center p-5">
                         <!-- Couple Names -->
@@ -56,15 +55,15 @@ require_once 'helpers/functions.php';
                         </p>
                         
                         <!-- Action Buttons -->
-                        <div class="action-buttons">
-                            <button class="btn btn-primary btn-lg me-3 mb-4" id="viewGiftsBtn">
+                        <div class="action-buttons d-flex justify-content-center flex-column align-items-center">
+                            <button class="btn btn-primary btn-lg me-3 mb-4" style="width: max-content" id="viewGiftsBtn">
                                 <i class="fas fa-gift me-2"></i>
                                 Ver Lista de Presentes
                             </button>
                             
-                            <button class="btn btn-outline-secondary btn-sm" id="musicToggleBtn">
-                                <i class="fas fa-music me-2"></i>
-                                <span id="musicToggleText">Pausar Música</span>
+                            <button class="btn btn-outline-danger btn-sm " style="width: max-content" id="musicToggleBtn">
+                                <i class="fas fa-pause me-2"></i>
+                                <span id="musicToggleText">Pausar Áudio</span>
                             </button>
                         </div>
                         
@@ -80,6 +79,30 @@ require_once 'helpers/functions.php';
         </div>
     </div>
     
+    <!-- Modal de Boas-vindas -->
+    <div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content welcome-modal-content">
+                <div class="modal-body text-center p-5">
+                    <div class="welcome-icon mb-4">
+                        <i class="fas fa-heart fa-3x text-primary"></i>
+                    </div>
+                    <h3 class="modal-title mb-3" id="welcomeModalLabel">
+                        Bem-vindos ao nosso casamento!
+                    </h3>
+                    <p class="mb-4 text-muted">
+                        Estamos muito felizes em compartilhar este momento especial com vocês. <br>
+                        Aproveitem cada instante desta celebração!
+                    </p>
+                    <button type="button" class="btn btn-primary btn-lg px-5" id="welcomeOkBtn">
+                        <i class="fas fa-heart me-2"></i>
+                        Continuar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Container -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
         <div id="notificationToast" class="toast" role="alert">
