@@ -5,18 +5,25 @@
 $(document).ready(function() {
     'use strict';
     
-    let musicElement = document.getElementById('backgroundMusic');
+    let musicElement = null;
     let isMusicPlaying = false;
     
-    // Inicializar música se estiver disponível
-    if (musicElement) {
-        initMusicController();
-    }
+    // Aguardar um pouco para garantir que o elemento esteja carregado
+    setTimeout(() => {
+        musicElement = document.getElementById('backgroundMusic');
+        
+        if (musicElement) {
+            initMusicController();
+        }
+    }, 500);
     
     /**
      * Inicializa o controlador de música
      */
     function initMusicController() {
+        if (!musicElement) {
+            return;
+        }
         musicElement.volume = 0.4;
         musicElement.muted = false;
         
@@ -31,8 +38,15 @@ $(document).ready(function() {
             updateMusicButton();
         });
         
+        musicElement.addEventListener('error', function(e) {
+            // Erro silencioso - não mostrar para o usuário
+        });
+        
         // Restaurar estado da música
         restoreMusicState();
+        
+        // Não tentar iniciar música automaticamente (bloqueado pelos navegadores)
+        // A música será iniciada apenas quando o usuário clicar no botão
         
         // Salvar estado periodicamente
         setInterval(saveMusicState, 5000);
@@ -53,23 +67,18 @@ $(document).ready(function() {
                 const musicState = JSON.parse(savedState);
                 const timeDiff = Date.now() - musicState.timestamp;
                 
-                // Se passou menos de 30 segundos, restaurar o estado
+                // Se passou menos de 30 segundos, restaurar apenas a posição
                 if (timeDiff < 30000 && musicState.isPlaying) {
                     setTimeout(() => {
                         if (musicElement && musicElement.readyState >= 2) {
                             musicElement.currentTime = musicState.currentTime;
-                            musicElement.play().then(() => {
-                                isMusicPlaying = true;
-                                updateMusicButton();
-                                console.log('Música restaurada na lista de presentes');
-                            }).catch(error => {
-                                console.log('Não foi possível restaurar a música:', error);
-                            });
+                            isMusicPlaying = false; // Não reproduzir automaticamente
+                            updateMusicButton();
                         }
                     }, 1000);
                 }
             } catch (error) {
-                console.log('Erro ao restaurar estado da música:', error);
+                // Erro silencioso
             }
         }
     }
@@ -121,13 +130,17 @@ $(document).ready(function() {
      * Reproduz a música
      */
     function playMusic() {
-        if (musicElement && musicElement.paused) {
+        if (!musicElement) {
+            return;
+        }
+        
+        if (musicElement.paused) {
             musicElement.play().then(() => {
                 isMusicPlaying = true;
                 updateMusicButton();
                 saveMusicState();
             }).catch(error => {
-                console.warn('Erro ao reproduzir música:', error);
+                // Erro silencioso - não mostrar para o usuário
             });
         }
     }

@@ -15,6 +15,9 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo SITE_TITLE; ?></title>
 
+    <!-- Favicon png-->
+    <link rel="icon" href="assets/images/favicon.png" type="image/png">
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -37,6 +40,7 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
         <source src="assets/audio/musica.mp3" type="audio/mpeg">
         Seu navegador não suporta o elemento de áudio.
     </audio>
+
 
     <!-- Hero Section -->
     <section class="hero-section">
@@ -163,9 +167,11 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
 
                                         <!-- Botão de Ação -->
                                         <div class="mt-auto">
-                                            <button class="btn btn-primary w-100 resgatar-btn d-flex align-items-center justify-content-center gap-2"
+                                            <button class="btn btn-primary w-100 checkout-btn d-flex align-items-center justify-content-center gap-2"
                                                 data-gift-id="<?php echo $gift['id']; ?>"
-                                                data-gift-name="<?php echo htmlspecialchars($gift['titulo']); ?>">
+                                                data-gift-name="<?php echo htmlspecialchars($gift['titulo']); ?>"
+                                                data-gift-value="<?php echo $gift['valor']; ?>"
+                                                onclick="openCheckoutModal(this)">
                                                 <i class="fas fa-gift me-2"></i>
                                                 <span class="d-none d-md-block">Resgatar Presente</span>
                                                 <span class="d-block d-md-none">Resgatar</span>
@@ -279,11 +285,151 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
         </div>
     </div>
 
+    <!-- Modal de Checkout PIX -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="checkoutModalLabel">
+                        <i class="fas fa-gift me-2"></i>
+                        Presentear com PIX
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Informações do Presente -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title text-muted mb-2">Presente Selecionado</h6>
+                                    <h4 class="card-text text-primary mb-1" id="checkoutGiftName">Nome do Presente</h4>
+                                    <h3 class="card-text text-success fw-bold" id="checkoutGiftValue">R$ 0,00</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulário do Doador -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-muted mb-3">
+                                <i class="fas fa-user me-2"></i>
+                                Seus Dados (Opcional)
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="donorName" class="form-label">Seu Nome</label>
+                                    <input type="text" class="form-control" id="donorName" placeholder="Informe seu nome">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="donorPhone" class="form-label">WhatsApp (Opcional)</label>
+                                    <input type="tel" class="form-control" id="donorPhone" placeholder="(11) 99999-9999">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opções de Pagamento -->
+                    <div class="row">
+                        <div class="col-12">
+                            <h6 class="text-muted mb-3">
+                                <i class="fas fa-credit-card me-2"></i>
+                                Escolha como Pagar
+                            </h6>
+                        </div>
+                        
+                        <!-- QR Code PIX -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card border-primary h-100">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title text-primary">
+                                        <i class="fas fa-qrcode me-2"></i>
+                                        QR Code PIX
+                                    </h6>
+                                    <p class="card-text text-muted small mb-3">
+                                        Escaneie com seu app do banco
+                                    </p>
+                                    <div class="qr-code-container mb-3">
+                                        <div id="pixQRCode" class="text-center">
+                                            <!-- QR Code será inserido aqui -->
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline-primary btn-sm" onclick="refreshQRCode()">
+                                        <i class="fas fa-sync-alt me-1"></i>
+                                        Atualizar QR Code
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PIX Copia e Cola -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card border-success h-100">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title text-success">
+                                        <i class="fas fa-copy me-2"></i>
+                                        PIX Copia e Cola
+                                    </h6>
+                                    <p class="card-text text-muted small mb-3">
+                                        Copie o código e cole no seu app
+                                    </p>
+                                    <div class="pix-code-container mb-3">
+                                        <textarea id="pixCode" class="form-control" rows="4" readonly style="font-size: 0.8rem;"></textarea>
+                                    </div>
+                                    <button class="btn btn-success btn-sm" onclick="copyPixCode()">
+                                        <i class="fas fa-copy me-1"></i>
+                                        Copiar Código PIX
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Instruções -->
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Instruções Importantes
+                        </h6>
+                        <ol class="mb-0">
+                            <li>Realize o pagamento usando uma das opções acima</li>
+                            <li>Após o pagamento, envie o comprovante pelo WhatsApp</li>
+                            <li>Clique no botão abaixo para enviar o comprovante</li>
+                        </ol>
+                    </div>
+
+                    <!-- Botão WhatsApp -->
+                    <div class="text-center">
+                        <a id="whatsappLink" href="#" class="btn btn-success btn-lg" target="_blank">
+                            <i class="fab fa-whatsapp me-2"></i>
+                            Enviar Comprovante pelo WhatsApp
+                        </a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>
+                        Fechar
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="generateCheckout()">
+                        <i class="fas fa-sync-alt me-1"></i>
+                        Gerar Novo Pagamento
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- PIX Library -->
+    <script src="https://cdn.jsdelivr.net/npm/pix-js@1.0.0/dist/pix.min.js"></script>
+    
 
     <!-- Configuração JavaScript -->
     <script>
@@ -291,6 +437,12 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
         window.BASE_URL = '<?php echo BASE_URL; ?>';
     </script>
 
+    <!-- PIX Functions JS -->
+    <script src="assets/js/pix-functions.js"></script>
+    
+    <!-- Music Controller JS -->
+    <script src="assets/js/music-controller.js"></script>
+    
     <!-- Custom JS -->
     <script src="assets/js/main.js"></script>
 </body>

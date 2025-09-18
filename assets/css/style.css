@@ -132,7 +132,7 @@ body {
 
 .initials {
     font-family: 'Great Vibes', cursive;
-    font-size: 2rem;
+    font-size: 4rem;
     font-weight: 400;
     color: #51277a;
     letter-spacing: 3px;
@@ -163,6 +163,10 @@ body {
 
 
 @media (max-width: 768px) {
+    .initials {
+        font-size: 2em;
+    }
+
     .initials-box .initials {
         font-size: 3em;
         letter-spacing: 2px;
@@ -732,11 +736,37 @@ body {
         padding: 0.5rem 0.75rem;
     }
 
-    .countdown-boxes{
+    .countdown-boxes {
         gap: 3rem;
     }
 
-    .countdown-boxes .countdown-box{
+    .countdown-boxes .countdown-box {
         padding: 1.5rem 1.5rem;
     }
+}
+
+
+.music-control-fixed .btn {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.music-control-fixed .btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.music-control-fixed .btn.btn-outline-danger {
+    background: rgba(220, 53, 69, 0.2);
+    border-color: rgba(220, 53, 69, 0.5);
+}
+
+.music-control-fixed .btn.btn-outline-danger:hover {
+    background: rgba(220, 53, 69, 0.3);
+    border-color: rgba(220, 53, 69, 0.7);
 }

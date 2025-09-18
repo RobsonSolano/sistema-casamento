@@ -20,11 +20,17 @@ RewriteRule ^admin/?$ admin/dashboard.php [L]
 # Rota /admin/recados - área de recados do admin
 RewriteRule ^admin/recados/?$ admin/recados.php [L]
 
+# Rota /admin/pix_transactions - histórico de transações PIX
+RewriteRule ^admin/pix_transactions/?$ admin/pix_transactions.php [L]
+
 # Rota /recados - área de recados do admin (alternativa)
 RewriteRule ^recados/?$ admin/recados.php [L]
 
 # Rota /api/send_recado - API para envio de recados
 RewriteRule ^api/send_recado/?$ api/send_recado.php [L]
+
+# Rota /api/generate_pix - API para geração de PIX
+RewriteRule ^api/generate_pix/?$ api/generate_pix.php [L]
 
 # Proteger arquivos sensíveis
 <Files "config.php">

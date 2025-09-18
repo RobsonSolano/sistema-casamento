@@ -119,6 +119,9 @@ $stats = calculateGiftStats();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Admin</title>
 
+    <!-- Favicon png-->
+    <link rel="icon" href="assets/images/favicon.png" type="image/png">
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -294,8 +297,18 @@ $stats = calculateGiftStats();
             <div class="navbar-nav ms-auto d-flex align-items-center gap-2 justify-content-end">
                 <ul class="navbar-nav d-flex align-items-center gap-2">
                     <li>
+                        <a class="dropdown-item text-white" href="<?php echo base_url('presentes'); ?>" target="_blank">
+                            <i class="fas fa-gift me-2"></i>Lista de Presentes
+                        </a>
+                    </li>
+                    <li>
                         <a class="dropdown-item text-white" href="<?php echo base_url('admin/recados'); ?>">
                             <i class="fas fa-comments me-2"></i>Recados
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-white" href="<?php echo base_url('admin/pix_transactions'); ?>">
+                            <i class="fas fa-credit-card me-2"></i>Histórico PIX
                         </a>
                     </li>
                     <div class="nav-item dropdown">
@@ -382,18 +395,19 @@ $stats = calculateGiftStats();
             <div class="col-md-3 mb-3">
                 <div class="card stats-card">
                     <div class="card-body text-center">
-                        <i class="fas fa-clock fa-2x mb-2"></i>
-                        <div class="stats-number"><?php echo $stats['available_gifts']; ?></div>
-                        <div>Disponíveis</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="card stats-card">
-                    <div class="card-body text-center">
                         <i class="fas fa-percentage fa-2x mb-2"></i>
                         <div class="stats-number"><?php echo $stats['purchase_percentage']; ?>%</div>
                         <div>Comprados</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Total de recados -->
+            <div class="col-md-3 mb-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-comments fa-2x mb-2"></i>
+                        <div class="stats-number"><?php echo $stats['total_recados']; ?></div>
+                        <div>Total de Recados</div>
                     </div>
                 </div>
             </div>
@@ -406,7 +420,7 @@ $stats = calculateGiftStats();
             </div>
             <div class="card-body">
                 <form method="GET" class="row g-3">
-                    <div class="col-md-6">
+                    <div class="col-md-9">
                         <label for="search" class="form-label">Buscar</label>
                         <input type="text"
                             class="form-control"
@@ -415,15 +429,7 @@ $stats = calculateGiftStats();
                             value="<?php echo htmlspecialchars($search); ?>"
                             placeholder="Título do presente...">
                     </div>
-                    <div class="col-md-4">
-                        <label for="status" class="form-label">Status</label>
-                        <select class="form-select" id="status" name="status">
-                            <option value="">Todos</option>
-                            <option value="0" <?php echo $statusFilter === '0' ? 'selected' : ''; ?>>Disponíveis</option>
-                            <option value="1" <?php echo $statusFilter === '1' ? 'selected' : ''; ?>>Comprados</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <label class="form-label">&nbsp;</label>
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">
@@ -493,9 +499,8 @@ $stats = calculateGiftStats();
                             <tr>
                                 <th>Título</th>
                                 <th>Valor</th>
-                                <th>Status</th>
                                 <th>Data Criação</th>
-                                <th style="width: 280px;">Ações</th>
+                                <th style="width: 120px;">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -523,41 +528,12 @@ $stats = calculateGiftStats();
                                             <strong class="text-success"><?php echo formatCurrency($gift['valor']); ?></strong>
                                         </td>
                                         <td>
-                                            <?php if ($gift['status'] == 1): ?>
-                                                <span class="badge bg-success">
-                                                    <i class="fas fa-check me-1"></i>Comprado
-                                                </span>
-                                            <?php else: ?>
-                                                <span class="badge bg-warning">
-                                                    <i class="fas fa-clock me-1"></i>Disponível
-                                                </span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
                                             <small class="text-muted">
                                                 <?php echo formatDate($gift['data_criacao'], 'd/m/Y H:i'); ?>
                                             </small>
                                         </td>
-                                        <td>
+                                        <td style="width: 120px;">
                                             <div class="d-flex gap-2">
-                                                <?php if ($gift['status'] == 1): ?>
-                                                    <form method="POST" class="d-inline">
-                                                        <input type="hidden" name="action" value="toggle_status">
-                                                        <input type="hidden" name="gift_id" value="<?php echo $gift['id']; ?>">
-                                                        <button type="submit" class="btn btn-sm btn-outline-warning me-3">
-                                                            <i class="fas fa-undo me-1"></i>Marcar Disponível
-                                                        </button>
-                                                    </form>
-                                                <?php else: ?>
-                                                    <form method="POST" class="d-inline">
-                                                        <input type="hidden" name="action" value="toggle_status">
-                                                        <input type="hidden" name="gift_id" value="<?php echo $gift['id']; ?>">
-                                                        <button type="submit" class="btn btn-sm btn-outline-success me-3">
-                                                            <i class="fas fa-check me-1"></i>Marcar Comprado
-                                                        </button>
-                                                    </form>
-                                                <?php endif; ?>
-
                                                 <button type="button"
                                                     class="btn btn-sm btn-outline-danger"
                                                     onclick="confirmDelete(<?php echo $gift['id']; ?>)"
