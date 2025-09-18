@@ -21,12 +21,8 @@ $(document).ready(function() {
      */
     function init() {
         setupEventListeners();
-        setupAudio();
         setupWelcomeModal();
         animateElements();
-        
-        // Verificar se a música estava tocando em outra página
-        restoreMusicState();
         
         // Mostrar modal de boas-vindas após um pequeno delay
         setTimeout(() => {
@@ -63,38 +59,12 @@ $(document).ready(function() {
     }
     
     /**
-     * Ativa o áudio e fecha o modal
+     * Fecha o modal de boas-vindas
      */
     function activateAudioAndCloseModal() {
-        if (!audioPermissionGranted) {
-            audioPermissionGranted = true;
-            
-            // Tentar reproduzir a música
-            if (musicElement && musicElement.readyState >= 2) {
-            musicElement.play().then(() => {
-                console.log('Música iniciada pelo usuário');
-                isMusicPlaying = true;
-                updateMusicButton();
-                welcomeModal.hide();
-                
-                // Salvar estado da música
-                saveMusicState();
-                
-                // Verificar se o áudio está realmente tocando (não silenciado)
-                setTimeout(() => {
-                    simpleAudioCheck();
-                }, 1000);
-                
-                showNotification('🎵 Bem-vindos ao nosso casamento! 💕', 'success');
-            }).catch(error => {
-                    console.log('Erro ao reproduzir música:', error);
-                    welcomeModal.hide();
-                    showNotification('Erro ao ativar música. Tente clicar no botão de áudio.', 'warning');
-                });
-            } else {
-                welcomeModal.hide();
-                showNotification('Aguarde o áudio carregar e tente clicar no botão de áudio.', 'info');
-            }
+        if (welcomeModal) {
+            welcomeModal.hide();
+            showNotification('🎵 Bem-vindos ao nosso casamento! 💕', 'success');
         }
     }
     
@@ -225,25 +195,32 @@ $(document).ready(function() {
      * Configura os event listeners
      */
     function setupEventListeners() {
-        // Botão de música
-        $('#musicToggleBtn').on('click', toggleMusic);
-        
-        // Botão de ver presentes
-        $('#viewGiftsBtn').on('click', viewGifts);
-        
-        // Teclas de atalho
-        $(document).on('keydown', handleKeyboard);
-        
         // Resize da janela
         $(window).on('resize', handleResize);
         
-        // Salvar estado antes de sair da página
-        $(window).on('beforeunload', function() {
-            saveMusicState();
+        // Formulário de recados
+        $('#guestbookForm').on('submit', function(e) {
+            e.preventDefault();
+            handleGuestbookSubmit();
         });
         
-        // Salvar estado periodicamente
-        setInterval(saveMusicState, 5000);
+        // Evento do botão resgatar presente na página inicial
+        $('.resgatar-btn').click(function() {
+            const giftId = $(this).data('gift-id');
+            const giftName = $(this).data('gift-name');
+            
+            // Por enquanto, apenas mostra um alerta
+            // Depois implementaremos a funcionalidade completa
+            showNotification('Funcionalidade em desenvolvimento', 'info');
+        });
+        
+        // Evento do botão "Ver Todos os Presentes"
+        $('#viewAllGiftsBtn').click(function() {
+            window.location.href = window.BASE_URL + '/presentes';
+        });
+        
+        // Inicializar contagem regressiva
+        initCountdown();
     }
     
     /**
@@ -363,23 +340,7 @@ $(document).ready(function() {
         }
     }
     
-    /**
-     * Exibe a lista de presentes (redireciona para lista.php)
-     */
-    function viewGifts() {
-        showLoading(true);
-        
-        // Simular carregamento
-        setTimeout(() => {
-            showLoading(false);
-            showNotification('Carregando lista de presentes...', 'info');
-            
-            // Redirecionar para lista de presentes
-            setTimeout(() => {
-                window.location.href = 'lista.php';
-            }, 1000);
-        }, 500);
-    }
+    // Função viewGifts() removida - agora usamos link HTML direto
     
     /**
      * Mostra/esconde o spinner de carregamento
@@ -427,20 +388,8 @@ $(document).ready(function() {
      * Manipula eventos de teclado
      */
     function handleKeyboard(e) {
-        switch(e.key) {
-            case ' ':
-                e.preventDefault();
-                toggleMusic();
-                break;
-            case 'Enter':
-                if (e.target.id === 'viewGiftsBtn') {
-                    viewGifts();
-                }
-                break;
-            case 'Escape':
-                pauseMusic();
-                break;
-        }
+        // Removido controles de música para evitar interferências
+        // Apenas funcionalidades essenciais permanecem
     }
     
     /**
@@ -534,10 +483,107 @@ $(document).ready(function() {
         };
     }
     
+    /**
+     * Inicializa a contagem regressiva
+     */
+    function initCountdown() {
+        const weddingDate = new Date('2025-12-13T00:00:00');
+        
+        function updateCountdown() {
+            const now = new Date();
+            const timeLeft = weddingDate - now;
+            
+            if (timeLeft > 0) {
+                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                
+                $('#days').text(days.toString().padStart(2, '0'));
+                $('#hours').text(hours.toString().padStart(2, '0'));
+                $('#minutes').text(minutes.toString().padStart(2, '0'));
+                $('#seconds').text(seconds.toString().padStart(2, '0'));
+            } else {
+                // Casamento chegou!
+                $('#days').text('00');
+                $('#hours').text('00');
+                $('#minutes').text('00');
+                $('#seconds').text('00');
+            }
+        }
+        
+        // Atualizar imediatamente
+        updateCountdown();
+        
+        // Atualizar a cada segundo
+        setInterval(updateCountdown, 1000);
+    }
+    
+    /**
+     * Manipula o envio do formulário de recados via AJAX
+     */
+    function handleGuestbookSubmit() {
+        const form = $('#guestbookForm');
+        const submitBtn = $('#submitRecadoBtn');
+        const btnText = $('.btn-text');
+        const btnLoading = $('.btn-loading');
+        
+        // Obter dados do formulário
+        const formData = {
+            nome: $('#guestName').val().trim(),
+            mensagem: $('#guestMessage').val().trim()
+        };
+        
+        // Validação básica
+        if (!formData.nome || !formData.mensagem) {
+            showNotification('Por favor, preencha todos os campos obrigatórios.', 'warning');
+            return;
+        }
+        
+        if (formData.mensagem.length < 10) {
+            showNotification('A mensagem deve ter pelo menos 10 caracteres.', 'warning');
+            return;
+        }
+        
+        // Mostrar loading
+        submitBtn.prop('disabled', true);
+        btnText.addClass('d-none');
+        btnLoading.removeClass('d-none');
+        
+        // Enviar via AJAX
+        $.ajax({
+            url: window.BASE_URL + '/api/send_recado.php',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    // Sucesso
+                    showNotification(response.message, 'success');
+                    
+                    // Limpar formulário
+                    form[0].reset();
+                } else {
+                    // Erro
+                    showNotification(response.message, 'danger');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Erro AJAX:', error);
+                showNotification('Ops! Algo deu errado. Tente novamente.', 'danger');
+            },
+            complete: function() {
+                // Restaurar botão
+                submitBtn.prop('disabled', false);
+                btnText.removeClass('d-none');
+                btnLoading.addClass('d-none');
+            }
+        });
+    }
+    
     // Expor funções globais se necessário
     window.CasamentoApp = {
-        toggleMusic: toggleMusic,
-        viewGifts: viewGifts,
         showNotification: showNotification
     };
 });

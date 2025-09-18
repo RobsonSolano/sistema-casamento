@@ -8,7 +8,7 @@ require_once '../helpers/functions.php';
 
 // Verificar se está logado
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header('Location: login.php');
+    header('Location: ' . base_url('login'));
     exit;
 }
 

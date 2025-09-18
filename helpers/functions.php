@@ -342,4 +342,59 @@ function validateCNPJ($cnpj) {
     
     return $cnpj[13] == $digit2;
 }
+
+/**
+ * Gera URL completa baseada na URL base do projeto
+ * @param string $uri URI relativa (ex: 'presentes', '/presentes', 'admin/login')
+ * @return string URL completa
+ */
+function base_url($uri = '') {
+    // Remove barra inicial se existir
+    $uri = ltrim($uri, '/');
+    
+    // Se não há URI, retorna apenas a BASE_URL
+    if (empty($uri)) {
+        return BASE_URL;
+    }
+    
+    // Retorna BASE_URL + URI
+    return BASE_URL . '/' . $uri;
+}
+
+/**
+ * Gera URL para assets (CSS, JS, imagens)
+ * @param string $path Caminho do asset
+ * @return string URL completa do asset
+ */
+function asset_url($path) {
+    return base_url('assets/' . ltrim($path, '/'));
+}
+
+/**
+ * Gera URL para rotas do sistema
+ * @param string $route Rota (ex: 'presentes', 'login', 'admin')
+ * @return string URL completa da rota
+ */
+function route_url($route) {
+    return base_url($route);
+}
+
+/**
+ * Redireciona para uma URL
+ * @param string $url URL de destino
+ * @param int $statusCode Código de status HTTP
+ */
+function redirect($url, $statusCode = 302) {
+    header("Location: $url", true, $statusCode);
+    exit;
+}
+
+/**
+ * Redireciona para uma rota do sistema
+ * @param string $route Rota de destino
+ * @param int $statusCode Código de status HTTP
+ */
+function redirect_to($route, $statusCode = 302) {
+    redirect(route_url($route), $statusCode);
+}
 ?>

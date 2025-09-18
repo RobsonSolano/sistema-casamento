@@ -4,7 +4,7 @@ require_once '../helpers/functions.php';
 
 // Se já estiver logado, redirecionar para dashboard
 if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
-    header('Location: dashboard.php');
+    header('Location: ' . base_url('admin'));
     exit;
 }
 
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['admin_email'] = $email;
         $_SESSION['login_time'] = time();
         
-        header('Location: dashboard.php');
+        header('Location: ' . base_url('admin'));
         exit;
     } else {
         $error = 'Email ou senha incorretos';

@@ -6,13 +6,15 @@
 
 // Configurações do Site
 define('SITE_TITLE', 'Lista de Presentes - Casamento');
-define('SITE_URL', 'http://localhost/casamento-presentes');
 define('SITE_DESCRIPTION', 'Lista de presentes para o casamento');
 
+// URL Base do Projeto (ajuste conforme necessário)
+define('BASE_URL', 'https://php81.nano.docker/_estudos/pessoal/casamento-presentes');
+
 // Informações do Casal
-define('COUPLE_NAME_1', 'Maria');
-define('COUPLE_NAME_2', 'João');
-define('WEDDING_DATE', '15 de Dezembro de 2024');
+define('COUPLE_NAME_1', 'MARISLAN');
+define('COUPLE_NAME_2', 'DOUGLAS');
+define('WEDDING_DATE', '13 | 12 | 2025');
 define('WELCOME_MESSAGE', 'Estamos muito felizes em compartilhar este momento especial com vocês!');
 
 // Configurações de Banco de Dados
