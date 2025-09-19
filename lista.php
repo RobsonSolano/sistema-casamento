@@ -321,111 +321,135 @@ $formattedGifts = array_map('formatGiftForDisplay', $paginatedGifts);
                         </div>
                     </div>
 
-                    <!-- Formulário do Doador -->
+                    <!-- Passo 1: Seus Dados -->
                     <div class="row mb-4">
                         <div class="col-12">
-                            <h6 class="text-muted mb-3">
-                                <i class="fas fa-user me-2"></i>
-                                Seus Dados (Opcional)
-                            </h6>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="donorName" class="form-label">Seu Nome</label>
-                                    <input type="text" class="form-control" id="donorName" placeholder="Informe seu nome">
+                            <div class="card border-info">
+                                <div class="card-header bg-info text-white">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-user me-2"></i>
+                                        Passo 1: Seus Dados
+                                    </h6>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="donorPhone" class="form-label">WhatsApp (Opcional)</label>
-                                    <input type="tel" class="form-control" id="donorPhone" placeholder="(11) 99999-9999">
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="donorName" class="form-label">Seu Nome *</label>
+                                        <input type="text" class="form-control" id="donorName" 
+                                               placeholder="Informe seu nome" required>
+                                        <small class="text-muted">Este nome aparecerá no histórico de presentes</small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="donorPhone" class="form-label">WhatsApp (Opcional)</label>
+                                        <input type="tel" class="form-control" id="donorPhone" 
+                                               placeholder="(11) 99999-9999">
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Opções de Pagamento -->
-                    <div class="row">
+                    <!-- Passo 2: Chave PIX -->
+                    <div class="row mb-4">
                         <div class="col-12">
-                            <h6 class="text-muted mb-3">
-                                <i class="fas fa-credit-card me-2"></i>
-                                Escolha como Pagar
-                            </h6>
-                        </div>
-                        
-                        <!-- QR Code PIX -->
-                        <div class="col-md-6 mb-4">
-                            <div class="card border-primary h-100">
-                                <div class="card-body text-center">
-                                    <h6 class="card-title text-primary">
-                                        <i class="fas fa-qrcode me-2"></i>
-                                        QR Code PIX
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-key me-2"></i>
+                                        Passo 2: Chave PIX
                                     </h6>
-                                    <p class="card-text text-muted small mb-3">
-                                        Escaneie com seu app do banco
-                                    </p>
-                                    <div class="qr-code-container mb-3">
-                                        <div id="pixQRCode" class="text-center">
-                                            <!-- QR Code será inserido aqui -->
-                                        </div>
-                                    </div>
-                                    <button class="btn btn-outline-primary btn-sm" onclick="refreshQRCode()">
-                                        <i class="fas fa-sync-alt me-1"></i>
-                                        Atualizar QR Code
-                                    </button>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- PIX Copia e Cola -->
-                        <div class="col-md-6 mb-4">
-                            <div class="card border-success h-100">
-                                <div class="card-body text-center">
-                                    <h6 class="card-title text-success">
-                                        <i class="fas fa-copy me-2"></i>
-                                        PIX Copia e Cola
-                                    </h6>
-                                    <p class="card-text text-muted small mb-3">
-                                        Copie o código e cole no seu app
+                                <div class="card-body">
+                                    <p class="text-muted mb-3">
+                                        Copie a chave PIX abaixo e faça o PIX com o valor de <strong id="checkoutGiftValueStep2">R$ 0,00</strong>
                                     </p>
-                                    <div class="pix-code-container mb-3">
-                                        <textarea id="pixCode" class="form-control" rows="4" readonly style="font-size: 0.8rem;"></textarea>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control form-control-lg text-center fw-bold" 
+                                               id="pixKeyDisplay" value="<?php echo PIX_KEY; ?>" readonly>
+                                        <button class="btn btn-outline-primary" type="button" onclick="copyPixKey()">
+                                            <i class="fas fa-copy me-1"></i>
+                                            Copiar
+                                        </button>
                                     </div>
-                                    <button class="btn btn-success btn-sm" onclick="copyPixCode()">
-                                        <i class="fas fa-copy me-1"></i>
-                                        Copiar Código PIX
-                                    </button>
+                                    <small class="text-muted mt-2 d-block">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Esta é a chave PIX oficial da <?php echo PIX_OWNER_NAME; ?>
+                                    </small>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Instruções -->
-                    <div class="alert alert-info">
+                    <!-- Passo 3: WhatsApp -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card border-success">
+                                <div class="card-header bg-success text-white">
+                                    <h6 class="mb-0">
+                                        <i class="fab fa-whatsapp me-2"></i>
+                                        Passo 3: Enviar Comprovante
+                                    </h6>
+                                </div>
+                                <div class="card-body text-center">
+                                    <p class="text-muted mb-3">
+                                        Após realizar o PIX, envie o comprovante para o WhatsApp da Marislan
+                                    </p>
+                                    <a id="whatsappLink" href="#" class="btn btn-success btn-lg" target="_blank">
+                                        <i class="fab fa-whatsapp me-2"></i>
+                                        Enviar Comprovante pelo WhatsApp
+                                    </a>
+                                    <small class="text-muted mt-2 d-block">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Clique no botão acima para abrir o WhatsApp com uma mensagem pré-formatada
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Passo 4: Confirmar Envio -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card border-warning">
+                                <div class="card-header bg-warning text-dark">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        Passo 4: Confirmar Envio
+                                    </h6>
+                                </div>
+                                <div class="card-body text-center">
+                                    <p class="text-muted mb-3">
+                                        Após enviar o comprovante pelo WhatsApp, confirme que o presente foi enviado
+                                    </p>
+                                    <button id="confirmGiftBtn" class="btn btn-warning btn-lg" onclick="confirmGift()">
+                                        <i class="fas fa-gift me-2"></i>
+                                        Confirmar Envio do Presente
+                                    </button>
+                                    <small class="text-muted mt-2 d-block">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Esta ação salvará seu presente no sistema como "Pré Confirmado"
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Agradecimento -->
+                    <div class="alert alert-success text-center">
                         <h6 class="alert-heading">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Instruções Importantes
+                            <i class="fas fa-heart me-2"></i>
+                            Muito Obrigado!
                         </h6>
-                        <ol class="mb-0">
-                            <li>Realize o pagamento usando uma das opções acima</li>
-                            <li>Após o pagamento, envie o comprovante pelo WhatsApp</li>
-                            <li>Clique no botão abaixo para enviar o comprovante</li>
-                        </ol>
-                    </div>
-
-                    <!-- Botão WhatsApp -->
-                    <div class="text-center">
-                        <a id="whatsappLink" href="#" class="btn btn-success btn-lg" target="_blank">
-                            <i class="fab fa-whatsapp me-2"></i>
-                            Enviar Comprovante pelo WhatsApp
-                        </a>
+                        <p class="mb-0">
+                            Sua contribuição é muito especial para nós! 
+                            <br>
+                            <strong>Marislan e Douglas</strong>
+                        </p>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times me-1"></i>
                         Fechar
-                    </button>
-                    <button type="button" class="btn btn-primary" onclick="generateCheckout()">
-                        <i class="fas fa-sync-alt me-1"></i>
-                        Gerar Novo Pagamento
                     </button>
                 </div>
             </div>
@@ -438,8 +462,6 @@ $formattedGifts = array_map('formatGiftForDisplay', $paginatedGifts);
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- PIX Library -->
-    <script src="https://cdn.jsdelivr.net/npm/pix-js@1.0.0/dist/pix.min.js"></script>
     
 
     <!-- Custom JS -->

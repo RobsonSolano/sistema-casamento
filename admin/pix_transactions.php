@@ -5,8 +5,12 @@
  * Página para visualizar e gerenciar transações PIX
  */
 
+
+session_start();
+
 try {
     require_once '../php/config.php';
+    require_once '../php/Database.php';
     require_once '../helpers/functions.php';
     require_once '../functions/pix.php';
     require_once '../functions/gifts_db.php';
@@ -46,33 +50,29 @@ try {
     // Query para buscar transações com dados do presente
     $sql = "SELECT pt.*, g.titulo as gift_title, g.valor as gift_value 
             FROM pix_transactions pt 
-            LEFT JOIN gifts g ON pt.gift_id = g.id 
+            LEFT JOIN presentes g ON pt.gift_id = g.id 
             ORDER BY pt.created_at DESC";
 
-    $stmt = $db->prepare($sql);
-    $stmt->execute();
-    $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $transactions = $db->fetchAll($sql);
 
     // Estatísticas
     $statsSql = "SELECT 
                     COUNT(*) as total,
-                    SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
-                    SUM(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) as paid,
-                    SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) as confirmed,
+                    SUM(CASE WHEN status = 'iniciado' THEN 1 ELSE 0 END) as iniciado,
+                    SUM(CASE WHEN status = 'pre_confirmado' THEN 1 ELSE 0 END) as pre_confirmado,
+                    SUM(CASE WHEN status = 'confirmado' THEN 1 ELSE 0 END) as confirmado,
                     SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) as cancelled,
-                    SUM(CASE WHEN status = 'confirmed' THEN amount ELSE 0 END) as total_confirmed
+                    SUM(CASE WHEN status = 'confirmado' THEN amount ELSE 0 END) as total_confirmed
                  FROM pix_transactions";
 
-    $statsStmt = $db->prepare($statsSql);
-    $statsStmt->execute();
-    $stats = $statsStmt->fetch(PDO::FETCH_ASSOC);
+    $stats = $db->fetchOne($statsSql);
 } catch (Exception $e) {
     $transactions = [];
     $stats = [
         'total' => 0,
-        'pending' => 0,
-        'paid' => 0,
-        'confirmed' => 0,
+        'iniciado' => 0,
+        'pre_confirmado' => 0,
+        'confirmado' => 0,
         'cancelled' => 0,
         'total_confirmed' => 0
     ];
@@ -151,7 +151,7 @@ try {
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container-fluid">
+        <div class="container">
             <a class="navbar-brand" href="<?php echo base_url('admin'); ?>">
                 <i class="fas fa-gift me-2"></i>
                 Admin - Histórico PIX
@@ -196,7 +196,7 @@ try {
         </div>
     </nav>
 
-    <div class="container-fluid mt-4">
+    <div class="container mt-4">
         <!-- Mensagens -->
         <?php if (isset($_SESSION['success_message'])): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -225,21 +225,21 @@ try {
                 </div>
             </div>
             <div class="col-md-2">
+                <div class="stats-card text-center" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%);">
+                    <div class="stats-number"><?php echo $stats['iniciado']; ?></div>
+                    <div>Iniciados</div>
+                </div>
+            </div>
+            <div class="col-md-2">
                 <div class="stats-card text-center" style="background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);">
-                    <div class="stats-number"><?php echo $stats['pending']; ?></div>
-                    <div>Pendentes</div>
+                    <div class="stats-number"><?php echo $stats['pre_confirmado']; ?></div>
+                    <div>Pré Confirmados</div>
                 </div>
             </div>
             <div class="col-md-2">
                 <div class="stats-card text-center" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
-                    <div class="stats-number"><?php echo $stats['paid']; ?></div>
-                    <div>Pagas</div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="stats-card text-center" style="background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);">
-                    <div class="stats-number"><?php echo $stats['confirmed']; ?></div>
-                    <div>Confirmadas</div>
+                    <div class="stats-number"><?php echo $stats['confirmado']; ?></div>
+                    <div>Confirmados</div>
                 </div>
             </div>
             <div class="col-md-2">
@@ -274,7 +274,7 @@ try {
                 <?php else: ?>
                     <div class="row">
                         <?php foreach ($transactions as $transaction): ?>
-                            <div class="col-md-6 col-lg-4">
+                            <div class="col-12 col-xl-6">
                                 <div class="card transaction-card <?php echo $transaction['status']; ?>">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-start mb-2">
@@ -282,10 +282,10 @@ try {
                                                 <?php echo htmlspecialchars($transaction['gift_title'] ?? 'Presente não encontrado'); ?>
                                             </h6>
                                             <span class="badge status-badge bg-<?php
-                                                                                echo $transaction['status'] === 'pending' ? 'warning' : ($transaction['status'] === 'paid' ? 'success' : ($transaction['status'] === 'confirmed' ? 'info' : 'danger'));
+                                                                                echo $transaction['status'] === 'iniciado' ? 'secondary' : ($transaction['status'] === 'pre_confirmado' ? 'warning' : ($transaction['status'] === 'confirmado' ? 'success' : 'danger'));
                                                                                 ?>">
                                                 <?php
-                                                echo $transaction['status'] === 'pending' ? 'Pendente' : ($transaction['status'] === 'paid' ? 'Pago' : ($transaction['status'] === 'confirmed' ? 'Confirmado' : 'Cancelado'));
+                                                echo $transaction['status'] === 'iniciado' ? 'Iniciado' : ($transaction['status'] === 'pre_confirmado' ? 'Pré Confirmado' : ($transaction['status'] === 'confirmado' ? 'Confirmado' : 'Cancelado'));
                                                 ?>
                                             </span>
                                         </div>
@@ -311,7 +311,7 @@ try {
                                         <div class="mb-2">
                                             <small class="text-muted">
                                                 <i class="fas fa-fingerprint me-1"></i>
-                                                ID: <?php echo substr($transaction['transaction_id'], -8); ?>
+                                                ID: <?php echo substr($transaction['id'], -8); ?>
                                             </small>
                                         </div>
 
@@ -326,23 +326,23 @@ try {
 
                                         <!-- Botões de Ação -->
                                         <div class="d-flex gap-2 mt-3">
-                                            <?php if ($transaction['status'] === 'pending'): ?>
-                                                <button class="btn btn-success btn-sm" onclick="updateStatus('<?php echo $transaction['transaction_id']; ?>', 'paid')">
-                                                    <i class="fas fa-check me-1"></i>Marcar como Pago
+                                            <?php if ($transaction['status'] === 'iniciado'): ?>
+                                                <button class="btn btn-warning btn-sm" onclick="updateStatus('<?php echo $transaction['id']; ?>', 'pre_confirmado')">
+                                                    <i class="fas fa-check me-1"></i>Marcar como Pré Confirmado
                                                 </button>
-                                                <button class="btn btn-danger btn-sm" onclick="updateStatus('<?php echo $transaction['transaction_id']; ?>', 'cancelled')">
+                                                <button class="btn btn-danger btn-sm" onclick="updateStatus('<?php echo $transaction['id']; ?>', 'cancelled')">
                                                     <i class="fas fa-times me-1"></i>Cancelar
                                                 </button>
-                                            <?php elseif ($transaction['status'] === 'paid'): ?>
-                                                <button class="btn btn-info btn-sm" onclick="updateStatus('<?php echo $transaction['transaction_id']; ?>', 'confirmed')">
-                                                    <i class="fas fa-check-double me-1"></i>Confirmar
+                                            <?php elseif ($transaction['status'] === 'pre_confirmado'): ?>
+                                                <button class="btn btn-success btn-sm" onclick="updateStatus('<?php echo $transaction['id']; ?>', 'confirmado')">
+                                                    <i class="fas fa-check-double me-1"></i>Confirmar Definitivamente
                                                 </button>
-                                                <button class="btn btn-warning btn-sm" onclick="updateStatus('<?php echo $transaction['transaction_id']; ?>', 'pending')">
-                                                    <i class="fas fa-undo me-1"></i>Voltar para Pendente
+                                                <button class="btn btn-secondary btn-sm" onclick="updateStatus('<?php echo $transaction['id']; ?>', 'iniciado')">
+                                                    <i class="fas fa-undo me-1"></i>Voltar para Iniciado
                                                 </button>
-                                            <?php elseif ($transaction['status'] === 'confirmed'): ?>
-                                                <button class="btn btn-warning btn-sm" onclick="updateStatus('<?php echo $transaction['transaction_id']; ?>', 'paid')">
-                                                    <i class="fas fa-undo me-1"></i>Voltar para Pago
+                                            <?php elseif ($transaction['status'] === 'confirmado'): ?>
+                                                <button class="btn btn-warning btn-sm" onclick="updateStatus('<?php echo $transaction['id']; ?>', 'pre_confirmado')">
+                                                    <i class="fas fa-undo me-1"></i>Voltar para Pré Confirmado
                                                 </button>
                                             <?php endif; ?>
                                         </div>

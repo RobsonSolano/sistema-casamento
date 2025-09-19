@@ -7,6 +7,7 @@ try {
     require_once '../php/config.php';
     require_once '../helpers/functions.php';
     require_once '../functions/gifts_db.php';
+    require_once '../functions/pix.php';
 } catch (Exception $e) {
     die("Erro ao carregar arquivos: " . $e->getMessage());
 } catch (Error $e) {
@@ -110,6 +111,13 @@ $statusFilter = sanitizeInput($_GET['status'] ?? '');
 
 $gifts = searchGifts($search, $statusFilter);
 $stats = calculateGiftStats();
+
+// Adicionar estatísticas PIX
+$stats['total_pix_transactions'] = countPixTransactionsByStatus();
+$stats['confirmed_pix_transactions'] = countPixTransactionsByStatus('confirmado');
+$stats['pre_confirmed_pix_transactions'] = countPixTransactionsByStatus('pre_confirmado');
+$stats['initiated_pix_transactions'] = countPixTransactionsByStatus('iniciado');
+$stats['total_pix_amount'] = getTotalConfirmedPixAmount();
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -408,6 +416,50 @@ $stats = calculateGiftStats();
                         <i class="fas fa-comments fa-2x mb-2"></i>
                         <div class="stats-number"><?php echo $stats['total_recados']; ?></div>
                         <div>Total de Recados</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Segunda linha de estatísticas -->
+        <div class="row mb-4">
+            <!-- Total PIX -->
+            <div class="col-md-3 mb-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-credit-card fa-2x mb-2 text-primary"></i>
+                        <div class="stats-number"><?php echo $stats['total_pix_transactions']; ?></div>
+                        <div>Transações PIX</div>
+                    </div>
+                </div>
+            </div>
+            <!-- PIX Confirmados -->
+            <div class="col-md-3 mb-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-check-circle fa-2x mb-2 text-success"></i>
+                        <div class="stats-number"><?php echo $stats['confirmed_pix_transactions']; ?></div>
+                        <div>PIX Confirmados</div>
+                    </div>
+                </div>
+            </div>
+            <!-- PIX Pré Confirmados -->
+            <div class="col-md-3 mb-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-clock fa-2x mb-2 text-warning"></i>
+                        <div class="stats-number"><?php echo $stats['pre_confirmed_pix_transactions']; ?></div>
+                        <div>PIX Pré Confirmados</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Valor Total PIX -->
+            <div class="col-md-3 mb-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-dollar-sign fa-2x mb-2 text-success"></i>
+                        <div class="stats-number">R$ <?php echo number_format($stats['total_pix_amount'] ?? 0, 2, ',', '.'); ?></div>
+                        <div>Total PIX Confirmado</div>
                     </div>
                 </div>
             </div>

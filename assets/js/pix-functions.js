@@ -1,153 +1,56 @@
 /**
- * Funções PIX para checkout
+ * Funções PIX simplificadas para checkout de presentes
+ * Modal simplificado com chave PIX e WhatsApp
  */
 
 // Variáveis globais para checkout
 let currentCheckoutData = null;
 let checkoutModal = null;
-
-
-/**
- * Gera código PIX usando biblioteca especializada
- */
-function generatePixCodeJS(pixKey, amount, merchantName, merchantCity, txid, description) {
-    try {
-        // Verificar se a biblioteca PIX está disponível
-        if (typeof Pix !== 'undefined') {
-            // Criar instância PIX
-            const pix = new Pix({
-                pixKey: pixKey,
-                description: description || `Presente: ${merchantName}`,
-                merchantName: merchantName,
-                merchantCity: merchantCity,
-                txid: txid,
-                amount: amount / 100 // Converter centavos para reais
-            });
-            
-            return pix.getPayload();
-        } else {
-            return generatePixCodeManual(pixKey, amount, merchantName, merchantCity, txid, description);
-        }
-    } catch (error) {
-        return generatePixCodeManual(pixKey, amount, merchantName, merchantCity, txid, description);
-    }
-}
+let currentPixTransactionId = null; // ID da transação PIX atual
 
 /**
- * Implementação manual do PIX (fallback)
- */
-function generatePixCodeManual(pixKey, amount, merchantName, merchantCity, txid, description) {
-    // Formato EMV para PIX - versão simplificada e funcional
-    const payloadFormatIndicator = '000201';
-    const pointOfInitiationMethod = '0102';
-    
-    // Merchant Account Information
-    const pixKeyLength = pixKey.length.toString().padStart(2, '0');
-    const merchantAccountInfo = '26' + 
-        (14 + pixKeyLength).toString().padStart(2, '0') + 
-        '0014br.gov.bcb.pix01' + pixKeyLength + pixKey;
-    
-    // Merchant Category Code
-    const merchantCategoryCode = '520400005303986';
-    
-    // Transaction Currency
-    const amountStr = amount.toString();
-    const transactionCurrency = '540' + amountStr.length.toString().padStart(2, '0') + amountStr;
-    
-    // Country Code
-    const countryCode = '5802BR';
-    
-    // Merchant Name
-    const merchantNameLength = merchantName.length.toString().padStart(2, '0');
-    const merchantNameField = '59' + merchantNameLength + merchantName;
-    
-    // Merchant City
-    const merchantCityLength = merchantCity.length.toString().padStart(2, '0');
-    const merchantCityField = '60' + merchantCityLength + merchantCity;
-    
-    // Additional Data Field Template
-    const txidLength = txid.length.toString().padStart(2, '0');
-    const additionalDataField = '62' + 
-        (5 + txidLength).toString().padStart(2, '0') + 
-        '05' + txidLength + txid;
-    
-    // Concatenar tudo
-    const data = payloadFormatIndicator + 
-                 pointOfInitiationMethod + 
-                 merchantAccountInfo + 
-                 merchantCategoryCode + 
-                 transactionCurrency + 
-                 countryCode + 
-                 merchantNameField + 
-                 merchantCityField + 
-                 additionalDataField + 
-                 '6304';
-    
-    // Calcular CRC16
-    const crc = calculateCRC16(data);
-    
-    return data + crc;
-}
-
-/**
- * Calcula CRC16 para PIX
- */
-function calculateCRC16(data) {
-    let crc = 0xFFFF;
-    for (let i = 0; i < data.length; i++) {
-        crc ^= data.charCodeAt(i);
-        for (let j = 0; j < 8; j++) {
-            if (crc & 1) {
-                crc = (crc >> 1) ^ 0x8408;
-            } else {
-                crc >>= 1;
-            }
-        }
-    }
-    return (crc ^ 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
-}
-
-/**
- * Abre o modal de checkout PIX
+ * Abre o modal de checkout PIX simplificado
  */
 window.openCheckoutModal = function(button) {
-    
-    // Usar JavaScript vanilla para garantir compatibilidade
     const giftId = button.getAttribute('data-gift-id');
     const giftName = button.getAttribute('data-gift-name');
     const giftValue = button.getAttribute('data-gift-value');
     
-    // Debug detalhado
-        giftId: giftId,
-        giftName: giftName,
-        giftValue: giftValue,
-        buttonElement: button
-    });
-    
-    // Armazenar dados do presente
     currentCheckoutData = {
         giftId: giftId,
         giftName: giftName,
         giftValue: giftValue
     };
     
-    // Aguardar jQuery estar disponível
+    // Atualizar informações do presente no modal
     if (typeof $ !== 'undefined') {
-        // Atualizar informações no modal
         $('#checkoutGiftName').text(giftName);
         
-        // Corrigir formatação do valor
         let formattedValue = 'R$ 0,00';
         if (giftValue && giftValue !== '' && giftValue !== '0') {
-            // Remover formatação se existir (ex: "R$ 50,00" -> "50.00")
             let cleanValue = giftValue.toString().replace(/[^\d,.-]/g, '').replace(',', '.');
             const numericValue = parseFloat(cleanValue);
             if (!isNaN(numericValue) && numericValue > 0) {
                 formattedValue = 'R$ ' + numericValue.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
             }
         }
+        
+        // Atualizar valor em ambos os lugares
         $('#checkoutGiftValue').text(formattedValue);
-    } else {
+        $('#checkoutGiftValueStep2').text(formattedValue);
+        
+        // Gerar link do WhatsApp
+        generateWhatsAppLink(giftName, giftValue);
+        
+        // Limpar campos
+        $('#donorName').val('');
+        $('#donorPhone').val('');
+        
+        // Resetar transação PIX
+        currentPixTransactionId = null;
+        
+        // Resetar botão de confirmação
+        $('#confirmGiftBtn').prop('disabled', false).html('<i class="fas fa-gift me-2"></i>Confirmar Envio do Presente');
     }
     
     // Mostrar modal
@@ -155,15 +58,52 @@ window.openCheckoutModal = function(button) {
         checkoutModal = new bootstrap.Modal(document.getElementById('checkoutModal'));
     }
     checkoutModal.show();
-    
-    // Gerar PIX automaticamente
-    generateCheckout();
 }
 
 /**
- * Gera novo checkout PIX usando JavaScript
+ * Gera link do WhatsApp com mensagem pré-formatada
  */
-function generateCheckout() {
+function generateWhatsAppLink(giftName, giftValue) {
+    let formattedValue = 'R$ 0,00';
+    if (giftValue && giftValue !== '' && giftValue !== '0') {
+        let cleanValue = giftValue.toString().replace(/[^\d,.-]/g, '').replace(',', '.');
+        const numericValue = parseFloat(cleanValue);
+        if (!isNaN(numericValue) && numericValue > 0) {
+            formattedValue = 'R$ ' + numericValue.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+    }
+    
+    const donorName = document.getElementById('donorName').value.trim() || '[SEU NOME]';
+    
+    const message = `Olá Marislan! 👋
+
+Acabei de fazer um PIX para o presente "${giftName}" no valor de ${formattedValue}.
+
+Aqui está o comprovante do pagamento:
+
+[ANEXAR COMPROVANTE AQUI]
+
+Muito obrigado(a) pelo convite! 
+Que vocês sejam muito felizes! 💕
+
+Atenciosamente,
+${donorName}`;
+
+    const whatsappNumber = '5511996271186'; // Número da Marislan
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+    
+    // Atualizar link do WhatsApp
+    const whatsappLinkEl = document.getElementById('whatsappLink');
+    if (whatsappLinkEl) {
+        whatsappLinkEl.href = whatsappLink;
+    }
+}
+
+/**
+ * Confirma o envio do presente
+ */
+window.confirmGift = function() {
     if (!currentCheckoutData) {
         if (typeof showNotification !== 'undefined') {
             showNotification('Erro: Dados do presente não encontrados', 'error');
@@ -171,208 +111,296 @@ function generateCheckout() {
         return;
     }
     
-    // Usar JavaScript vanilla para garantir compatibilidade
-    const donorNameEl = document.getElementById('donorName');
-    const donorPhoneEl = document.getElementById('donorPhone');
-    const donorName = donorNameEl ? donorNameEl.value.trim() : '';
-    const donorPhone = donorPhoneEl ? donorPhoneEl.value.trim() : '';
+    const donorName = document.getElementById('donorName').value.trim();
+    const donorPhone = document.getElementById('donorPhone').value.trim();
     
-    try {
-        // Configurações PIX (do config.php)
-        const pixKey = '11996271186'; // Chave PIX do celular
-        const merchantName = 'MARISLAN E DOUGLAS';
-        const merchantCity = 'São Paulo';
-        
-        // Gerar ID único para transação
-        const txid = 'casamento_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        
-        // Converter valor para centavos (PIX usa centavos)
-        const cleanValue = currentCheckoutData.giftValue.toString().replace(/[^\d,.-]/g, '').replace(',', '.');
-        const numericValue = parseFloat(cleanValue);
-        const amountInCents = Math.round(numericValue * 100);
-        
-            originalValue: currentCheckoutData.giftValue,
-            cleanValue: cleanValue,
-            numericValue: numericValue,
-            amountInCents: amountInCents
-        });
-        
-        if (amountInCents <= 0) {
-            if (typeof showNotification !== 'undefined') {
-                showNotification('Valor inválido para PIX', 'error');
-            }
-            return;
-        }
-        
-            pixKey,
-            amount: amountInCents,
-            merchantName,
-            merchantCity,
-            txid,
-            giftValue: currentCheckoutData.giftValue,
-            cleanValue: cleanValue,
-            donorName: donorName,
-            donorPhone: donorPhone
-        });
-        
-        // Gerar código PIX
-        const pixCode = generatePixCodeJS(
-            pixKey,
-            amountInCents,
-            merchantName,
-            merchantCity,
-            txid,
-            `Presente: ${currentCheckoutData.giftName}`
-        );
-        
-        
-        // Validar código PIX
-        if (!pixCode || pixCode.length < 50) {
-            if (typeof showNotification !== 'undefined') {
-                showNotification('Erro: Código PIX inválido', 'error');
-            }
-            return;
-        }
-        
-        // Validar estrutura do PIX
-        const isValid = window.validatePixCode(pixCode);
-        
-        if (!isValid) {
-            if (typeof showNotification !== 'undefined') {
-                showNotification('Aviso: Código PIX pode não funcionar', 'warning');
-            }
-        }
-        
-        // Atualizar código PIX no textarea
-        const pixCodeEl = document.getElementById('pixCode');
-        if (pixCodeEl) {
-            pixCodeEl.value = pixCode;
-        }
-        
-        // Gerar QR Code usando API externa (mais confiável)
-        const qrContainer = document.getElementById('pixQRCode');
-        if (qrContainer) {
-            // Usar API externa para gerar QR Code
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(pixCode)}`;
-            
-            // Criar nova imagem
-            const img = document.createElement('img');
-            img.src = qrUrl;
-            img.alt = 'QR Code PIX';
-            img.className = 'img-fluid';
-            img.style.maxWidth = '200px';
-            
-            // Limpar container e adicionar nova imagem
-            qrContainer.innerHTML = '';
-            qrContainer.appendChild(img);
-            
-            
-            // Verificar se a imagem carregou
-            img.onload = function() {
-            };
-            
-            img.onerror = function() {
-                // Fallback: usar Google Charts API
-                const googleQrUrl = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(pixCode)}`;
-                img.src = googleQrUrl;
-            };
-        } else {
-        }
-        
-        // Gerar link WhatsApp
-        const formattedAmount = parseFloat(cleanValue).toLocaleString('pt-BR', {minimumFractionDigits: 2});
-        
-        const whatsappMessage = `🎁 *COMPROVANTE DE PRESENTE* 🎁\n\n` +
-            `📝 *Presente:* ${currentCheckoutData.giftName}\n` +
-            `💰 *Valor:* R$ ${formattedAmount}\n` +
-            `🆔 *ID da Transação:* ${txid}\n` +
-            `📅 *Data:* ${new Date().toLocaleString('pt-BR')}\n\n` +
-            `✅ *Confirmação:* Envie este comprovante após o pagamento para confirmarmos o presente!\n\n` +
-            `💕 *Obrigado pelo carinho!*`;
-        
-        const whatsappLink = `https://wa.me/5511996271186?text=${encodeURIComponent(whatsappMessage)}`;
-        const whatsappLinkEl = document.getElementById('whatsappLink');
-        if (whatsappLinkEl) {
-            whatsappLinkEl.href = whatsappLink;
-        }
-        
+    if (!donorName) {
         if (typeof showNotification !== 'undefined') {
-            showNotification('PIX gerado com sucesso!', 'success');
-        } else {
+            showNotification('Por favor, informe seu nome no Passo 1 antes de confirmar', 'warning');
         }
-        
-    } catch (error) {
+        document.getElementById('donorName').focus();
+        // Destacar o campo
+        document.getElementById('donorName').classList.add('is-invalid');
+        setTimeout(() => {
+            document.getElementById('donorName').classList.remove('is-invalid');
+        }, 3000);
+        return;
+    }
+    
+    // Desabilitar botão e mostrar loading
+    const btn = document.getElementById('confirmGiftBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Salvando...';
+    
+    // Preparar dados
+    const cleanValue = currentCheckoutData.giftValue.toString().replace(/[^\d,.-]/g, '').replace(',', '.');
+    const numericValue = parseFloat(cleanValue);
+    
+    if (numericValue <= 0) {
         if (typeof showNotification !== 'undefined') {
-            showNotification('Erro ao gerar PIX. Tente novamente.', 'error');
-        } else {
+            showNotification('Valor inválido para PIX', 'error');
         }
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-gift me-2"></i>Confirmar Envio do Presente';
+        return;
+    }
+    
+    // Verificar se já existe transação PIX
+    if (currentPixTransactionId) {
+        // Atualizar status da transação existente
+        updatePixTransactionStatus(currentPixTransactionId, 'pre_confirmado');
+    } else {
+        // Criar nova transação PIX
+        createPixTransaction(numericValue, donorName, donorPhone, 'pre_confirmado');
     }
 }
 
 /**
- * Atualiza QR Code
+ * Atualiza status de uma transação PIX existente
  */
-window.refreshQRCode = function() {
-    generateCheckout();
+function updatePixTransactionStatus(transactionId, newStatus) {
+    const btn = document.getElementById('confirmGiftBtn');
+    
+    fetch(window.BASE_URL + '/api/update_pix_status.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            transaction_id: transactionId,
+            status: newStatus
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (typeof showNotification !== 'undefined') {
+                showNotification('Status atualizado! Aguarde a confirmação final.', 'success');
+            }
+            btn.innerHTML = '<i class="fas fa-check me-2"></i>Presente Confirmado!';
+            
+            // Fechar modal após 2 segundos
+            setTimeout(() => {
+                if (checkoutModal) {
+                    checkoutModal.hide();
+                }
+            }, 2000);
+        } else {
+            throw new Error(data.message || 'Erro ao atualizar status');
+        }
+    })
+    .catch(error => {
+        if (typeof showNotification !== 'undefined') {
+            showNotification('Erro ao confirmar presente: ' + error.message, 'error');
+        }
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-gift me-2"></i>Confirmar Envio do Presente';
+    });
 }
 
 /**
- * Copia código PIX para área de transferência
+ * Cria nova transação PIX
  */
-window.copyPixCode = function() {
-    const pixCodeEl = document.getElementById('pixCode');
-    const pixCode = pixCodeEl ? pixCodeEl.value : '';
+function createPixTransaction(amount, donorName, donorPhone, status) {
+    const btn = document.getElementById('confirmGiftBtn');
     
-    if (!pixCode) {
-        if (typeof showNotification !== 'undefined') {
-            showNotification('Nenhum código PIX disponível', 'warning');
+    fetch(window.BASE_URL + '/api/save_pix_transaction.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            gift_id: currentCheckoutData.giftId,
+            gift_name: currentCheckoutData.giftName,
+            amount: amount,
+            donor_name: donorName,
+            donor_phone: donorPhone,
+            status: status
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Armazenar ID da transação
+            currentPixTransactionId = data.transaction_id;
+            
+            if (typeof showNotification !== 'undefined') {
+                showNotification('Presente confirmado! Aguarde a confirmação final.', 'success');
+            }
+            btn.innerHTML = '<i class="fas fa-check me-2"></i>Presente Confirmado!';
+            
+            // Fechar modal após 2 segundos
+            setTimeout(() => {
+                if (checkoutModal) {
+                    checkoutModal.hide();
+                }
+            }, 2000);
         } else {
+            throw new Error(data.message || 'Erro ao salvar presente');
+        }
+    })
+    .catch(error => {
+        if (typeof showNotification !== 'undefined') {
+            showNotification('Erro ao confirmar presente: ' + error.message, 'error');
+        }
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-gift me-2"></i>Confirmar Envio do Presente';
+    });
+}
+
+/**
+ * Copia chave PIX para área de transferência e salva como iniciado
+ */
+window.copyPixKey = function() {
+    const pixKeyEl = document.getElementById('pixKeyDisplay');
+    const pixKey = pixKeyEl ? pixKeyEl.value : '';
+    
+    if (!pixKey) {
+        if (typeof showNotification !== 'undefined') {
+            showNotification('Chave PIX não encontrada', 'warning');
         }
         return;
     }
     
-    // Copiar para área de transferência
-    navigator.clipboard.writeText(pixCode).then(function() {
+    navigator.clipboard.writeText(pixKey).then(function() {
         if (typeof showNotification !== 'undefined') {
-            showNotification('Código PIX copiado!', 'success');
-        } else {
+            showNotification('Chave PIX copiada!', 'success');
         }
-    }).catch(function(err) {
         
+        // Salvar como iniciado se ainda não foi salvo
+        savePixAsInitiated();
+    }).catch(function(err) {
         // Fallback: selecionar texto
-        if (pixCodeEl) {
-            pixCodeEl.select();
+        if (pixKeyEl) {
+            pixKeyEl.select();
             document.execCommand('copy');
         }
         if (typeof showNotification !== 'undefined') {
-            showNotification('Código PIX selecionado!', 'info');
-        } else {
+            showNotification('Chave PIX selecionada!', 'info');
+        }
+        
+        // Salvar como iniciado mesmo no fallback
+        savePixAsInitiated();
+    });
+}
+
+/**
+ * Salva transação PIX como iniciado
+ */
+function savePixAsInitiated() {
+    if (!currentCheckoutData) {
+        return;
+    }
+    
+    const donorName = document.getElementById('donorName').value.trim();
+    const donorPhone = document.getElementById('donorPhone').value.trim();
+    
+    // Verificar se nome foi preenchido
+    if (!donorName) {
+        if (typeof showNotification !== 'undefined') {
+            showNotification('Por favor, informe seu nome no Passo 1 antes de copiar a chave PIX', 'warning');
+        }
+        document.getElementById('donorName').focus();
+        // Destacar o campo
+        document.getElementById('donorName').classList.add('is-invalid');
+        setTimeout(() => {
+            document.getElementById('donorName').classList.remove('is-invalid');
+        }, 3000);
+        return;
+    }
+    
+    // Preparar dados
+    const cleanValue = currentCheckoutData.giftValue.toString().replace(/[^\d,.-]/g, '').replace(',', '.');
+    const numericValue = parseFloat(cleanValue);
+    
+    if (numericValue <= 0) {
+        return;
+    }
+    
+    // Salvar transação PIX como iniciado
+    fetch(window.BASE_URL + '/api/save_pix_transaction.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            gift_id: currentCheckoutData.giftId,
+            gift_name: currentCheckoutData.giftName,
+            amount: numericValue,
+            donor_name: donorName,
+            donor_phone: donorPhone,
+            status: 'iniciado'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('PIX salvo como iniciado:', data);
+            // Armazenar ID da transação para futuras atualizações
+            currentPixTransactionId = data.transaction_id;
+            if (typeof showNotification !== 'undefined') {
+                showNotification('Presente iniciado! Agora você pode fazer o PIX.', 'info');
+            }
+        }
+    })
+    .catch(error => {
+        console.log('Erro ao salvar PIX como iniciado:', error);
+        if (typeof showNotification !== 'undefined') {
+            showNotification('Erro ao salvar presente. Tente novamente.', 'error');
         }
     });
 }
 
 /**
- * Valida código PIX usando validador online
+ * Atualiza link do WhatsApp quando o nome for digitado
  */
-window.validatePixCode = function(pixCode) {
-    if (!pixCode) return false;
+document.addEventListener('DOMContentLoaded', function() {
+    const donorNameEl = document.getElementById('donorName');
+    if (donorNameEl) {
+        donorNameEl.addEventListener('input', function() {
+            if (currentCheckoutData) {
+                generateWhatsAppLink(currentCheckoutData.giftName, currentCheckoutData.giftValue);
+            }
+        });
+    }
     
-    // Validações básicas
-    if (pixCode.length < 50) return false;
-    if (!pixCode.startsWith('000201')) return false;
-    if (!pixCode.endsWith('6304')) return false;
-    
-    // Verificar CRC16
-    const data = pixCode.slice(0, -4);
-    const crc = pixCode.slice(-4);
-    const calculatedCrc = calculateCRC16(data);
-    
-    return crc === calculatedCrc;
-};
-
-// Debug: confirmar que as funções foram definidas
-    openCheckoutModal: typeof window.openCheckoutModal,
-    refreshQRCode: typeof window.refreshQRCode,
-    copyPixCode: typeof window.copyPixCode,
-    validatePixCode: typeof window.validatePixCode
+    // Máscara para telefone
+    const donorPhoneEl = document.getElementById('donorPhone');
+    if (donorPhoneEl) {
+        donorPhoneEl.addEventListener('input', function() {
+            let value = this.value.replace(/\D/g, '');
+            
+            if (value.length <= 11) {
+                value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+                if (value.length < 14) {
+                    value = value.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+                }
+            }
+            this.value = value;
+        });
+    }
 });
+
+/**
+ * Função de compatibilidade (não usada mais)
+ */
+window.generateCheckout = function() {
+    // Não faz nada no modal simplificado
+    console.log('Modal simplificado - não precisa gerar PIX');
+}
+
+/**
+ * Função de compatibilidade (não usada mais)
+ */
+window.refreshQRCode = function() {
+    // Não faz nada no modal simplificado
+    console.log('Modal simplificado - não precisa atualizar QR Code');
+}
+
+/**
+ * Função de compatibilidade (não usada mais)
+ */
+window.copyPixCode = function() {
+    // Não faz nada no modal simplificado
+    console.log('Modal simplificado - não precisa copiar código PIX');
+}

@@ -19,11 +19,50 @@ $(document).ready(function() {
         setupEventListeners();
         setupWelcomeModal();
         animateElements();
+        startCountdown();
         
         // Mostrar modal de boas-vindas após um pequeno delay
         setTimeout(() => {
             showWelcomeModal();
         }, 1000);
+    }
+    
+    /**
+     * Inicia o contador regressivo
+     */
+    function startCountdown() {
+        // Data do casamento: 13 de dezembro de 2025
+        const weddingDate = new Date('2025-12-13T00:00:00');
+        
+        function updateCountdown() {
+            const now = new Date();
+            const timeLeft = weddingDate - now;
+            
+            if (timeLeft > 0) {
+                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                
+                // Atualizar os elementos HTML
+                $('#days').text(days.toString().padStart(2, '0'));
+                $('#hours').text(hours.toString().padStart(2, '0'));
+                $('#minutes').text(minutes.toString().padStart(2, '0'));
+                $('#seconds').text(seconds.toString().padStart(2, '0'));
+            } else {
+                // Casamento já aconteceu
+                $('#days').text('00');
+                $('#hours').text('00');
+                $('#minutes').text('00');
+                $('#seconds').text('00');
+            }
+        }
+        
+        // Atualizar imediatamente
+        updateCountdown();
+        
+        // Atualizar a cada segundo
+        setInterval(updateCountdown, 1000);
     }
     
     /**

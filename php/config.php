@@ -23,6 +23,7 @@ define('PIX_KEY_TYPE', 'phone'); // Tipo da chave PIX
 define('PIX_OWNER_NAME', 'MARISLAN E DOUGLAS'); // Nome do titular
 define('WHATSAPP_NUMBER', '5511996271186'); // WhatsApp para comprovantes
 
+
 // Configurações de Banco de Dados
 define('DB_HOST', 'mysql');
 define('DB_NAME', 'pessoal_casamento_mari_douglas');
