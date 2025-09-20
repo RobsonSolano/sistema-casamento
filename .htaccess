@@ -23,6 +23,9 @@ RewriteRule ^admin/recados/?$ admin/recados.php [L]
 # Rota /admin/pix_transactions - histórico de transações PIX
 RewriteRule ^admin/pix_transactions/?$ admin/pix_transactions.php [L]
 
+# Rota /admin/gifts - gestão de presentes do admin
+RewriteRule ^admin/gifts/?$ admin/gifts.php [L]
+
 # Rota /recados - área de recados do admin (alternativa)
 RewriteRule ^recados/?$ admin/recados.php [L]
 

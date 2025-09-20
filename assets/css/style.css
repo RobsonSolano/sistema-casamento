@@ -783,3 +783,124 @@ body {
     25% { transform: translateX(-5px); }
     75% { transform: translateX(5px); }
 }
+
+/* =====================================================
+   ESTILOS ADMINISTRATIVOS
+   ===================================================== */
+
+/* Layout Admin */
+.admin-body {
+    background-color: #f8f9fa;
+}
+
+.admin-navbar-brand {
+    font-weight: 600;
+}
+
+/* Cards Admin */
+.admin-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.admin-card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px 15px 0 0 !important;
+    border: none;
+}
+
+/* Botões Admin */
+.admin-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 50px;
+}
+
+.admin-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.admin-btn-danger {
+    border-radius: 50px;
+}
+
+.admin-btn-sm {
+    border-radius: 20px;
+}
+
+/* Formulários Admin */
+.admin-form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Tabelas Admin */
+.admin-table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+}
+
+.admin-badge {
+    border-radius: 20px;
+}
+
+/* Cards de Estatísticas */
+.admin-stats-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.admin-stats-card .card-body {
+    padding: 1.5rem;
+}
+
+.admin-stats-number {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+/* Toast Notifications Admin */
+.admin-toast-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}
+
+.admin-toast {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    min-width: 350px;
+    animation: toastSlideIn 0.3s ease-out;
+}
+
+.admin-toast-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px 20px 0 0;
+    padding: 1rem 1.5rem 0.5rem;
+}
+
+.admin-toast-body {
+    padding: 1rem 1.5rem 1.5rem;
+    font-weight: 500;
+}
+
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

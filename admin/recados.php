@@ -15,6 +15,9 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     exit;
 }
 
+// Definir título da página
+$pageTitle = 'Recados';
+
 // Processar ações
 $message = '';
 $messageType = '';
@@ -46,22 +49,8 @@ $search = $_GET['search'] ?? '';
 $recados = !empty($search) ? searchRecados($search) : getAllRecados();
 $stats = calculateRecadosStats();
 ?>
-<!DOCTYPE html>
-<html lang="pt-BR">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recados - Admin</title>
-
-     <!-- Favicon png-->
-    <link rel="icon" href="assets/images/favicon.png" type="image/png">
-    
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<?php include 'navbar.php'; ?>
 
     <style>
         body {
@@ -269,62 +258,6 @@ $stats = calculateRecadosStats();
     </style>
 </head>
 
-<body class="pb-5">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="<?php echo base_url('admin'); ?>">
-                <i class="fas fa-heart me-2"></i>
-                Admin - Recados
-            </a>
-
-            <div class="navbar-nav ms-auto">
-                <ul class="navbar-nav d-flex align-items-center gap-2">
-                    <li>
-                        <a class="dropdown-item text-white" href="<?php echo base_url('presentes'); ?>" target="_blank">
-                            <i class="fas fa-gift me-2"></i>Lista de Presentes
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item text-white" href="<?php echo base_url('admin/recados'); ?>">
-                            <i class="fas fa-comments me-2"></i>Recados
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item text-white" href="<?php echo base_url('admin/pix_transactions'); ?>">
-                            <i class="fas fa-credit-card me-2"></i>Histórico PIX
-                        </a>
-                    </li>
-                    <div class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user me-2"></i>Admin
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="<?php echo base_url('admin'); ?>">
-                                    <i class="fas fa-gift me-2"></i>Presentes
-                                </a></li>
-                            <li><a class="dropdown-item" href="<?php echo base_url(); ?>" target="_blank">
-                                    <i class="fas fa-external-link-alt me-2"></i>Ver Site
-                                </a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <form method="POST" class="d-inline">
-                                    <input type="hidden" name="action" value="logout">
-                                    <button type="submit" class="dropdown-item">
-                                        <i class="fas fa-sign-out-alt me-2"></i>Sair
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container py-5">
         <!-- Toast Notification -->
         <?php if ($message): ?>
             <div class="toast-container">
@@ -579,6 +512,5 @@ $stats = calculateRecadosStats();
             }
         }
     </script>
-</body>
 
-</html>
+<?php include 'footer.php'; ?>
