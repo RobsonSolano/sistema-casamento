@@ -121,6 +121,10 @@ function calculateGiftStats() {
     // Percentual comprado
     $purchasePercentage = $total > 0 ? round(($purchased / $total) * 100, 2) : 0;
     
+    // Total de recados
+    $totalRecadosSql = "SELECT COUNT(*) as total_recados FROM recados";
+    $totalRecados = $db->fetchOne($totalRecadosSql)['total_recados'] ?? 0;
+    
     return [
         'total_gifts' => (int)$total,
         'purchased_gifts' => (int)$purchased,
@@ -128,7 +132,8 @@ function calculateGiftStats() {
         'total_value' => (float)$totalValue,
         'purchased_value' => (float)$purchasedValue,
         'available_value' => (float)$availableValue,
-        'purchase_percentage' => $purchasePercentage
+        'purchase_percentage' => $purchasePercentage,
+        'total_recados' => (int)$totalRecados
     ];
 }
 

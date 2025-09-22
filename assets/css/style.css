@@ -1,5 +1,5 @@
 /* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Dancing+Script:wght@400;500;600;700&family=Great+Vibes&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Dancing+Script:wght@400;500;600;700&family=Great+Vibes&family=Cinzel:wght@400;500;600;700&display=swap');
 
 /* Reset e Base */
 * {
@@ -108,7 +108,7 @@ body {
 
 .initials-box .initials span {
     color: #fff;
-    font-family: 'Great Vibes', cursive;
+    font-family: 'Cinzel', sans-serif;
     font-weight: 400;
     letter-spacing: 3px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -131,8 +131,8 @@ body {
 }
 
 .initials {
-    font-family: 'Great Vibes', cursive;
-    font-size: 2rem;
+    font-family: 'Cinzel', sans-serif !important;
+    font-size: 4rem;
     font-weight: 400;
     color: #51277a;
     letter-spacing: 3px;
@@ -163,6 +163,10 @@ body {
 
 
 @media (max-width: 768px) {
+    .initials {
+        font-size: 2em;
+    }
+
     .initials-box .initials {
         font-size: 3em;
         letter-spacing: 2px;
@@ -241,6 +245,78 @@ body {
 .toast-header {
     background: transparent;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Custom Toast Notifications */
+.toast-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    min-width: 300px;
+    max-width: 400px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
+.toast-notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.toast-notification .toast-content {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* Toast Types */
+.toast-notification.toast-success {
+    background: rgba(40, 167, 69, 0.95);
+    color: white;
+    border-left: 4px solid #28a745;
+}
+
+.toast-notification.toast-info {
+    background: rgba(23, 162, 184, 0.95);
+    color: white;
+    border-left: 4px solid #17a2b8;
+}
+
+.toast-notification.toast-warning {
+    background: rgba(255, 193, 7, 0.95);
+    color: #212529;
+    border-left: 4px solid #ffc107;
+}
+
+.toast-notification.toast-danger {
+    background: rgba(220, 53, 69, 0.95);
+    color: white;
+    border-left: 4px solid #dc3545;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .toast-notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+        max-width: none;
+        transform: translateY(-100%);
+    }
+    
+    .toast-notification.show {
+        transform: translateY(0);
+    }
 }
 
 /* Responsive Design */
@@ -732,11 +808,171 @@ body {
         padding: 0.5rem 0.75rem;
     }
 
-    .countdown-boxes{
+    .countdown-boxes {
         gap: 3rem;
     }
 
-    .countdown-boxes .countdown-box{
+    .countdown-boxes .countdown-box {
         padding: 1.5rem 1.5rem;
+    }
+}
+
+
+.music-control-fixed .btn {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.music-control-fixed .btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.music-control-fixed .btn.btn-outline-danger {
+    background: rgba(220, 53, 69, 0.2);
+    border-color: rgba(220, 53, 69, 0.5);
+}
+
+.music-control-fixed .btn.btn-outline-danger:hover {
+    background: rgba(220, 53, 69, 0.3);
+    border-color: rgba(220, 53, 69, 0.7);
+}
+
+/* Estilos para campos inválidos */
+.form-control.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* =====================================================
+   ESTILOS ADMINISTRATIVOS
+   ===================================================== */
+
+/* Layout Admin */
+.admin-body {
+    background-color: #f8f9fa;
+}
+
+.admin-navbar-brand {
+    font-weight: 600;
+}
+
+/* Cards Admin */
+.admin-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.admin-card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px 15px 0 0 !important;
+    border: none;
+}
+
+/* Botões Admin */
+.admin-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 50px;
+}
+
+.admin-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.admin-btn-danger {
+    border-radius: 50px;
+}
+
+.admin-btn-sm {
+    border-radius: 20px;
+}
+
+/* Formulários Admin */
+.admin-form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Tabelas Admin */
+.admin-table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+}
+
+.admin-badge {
+    border-radius: 20px;
+}
+
+/* Cards de Estatísticas */
+.admin-stats-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.admin-stats-card .card-body {
+    padding: 1.5rem;
+}
+
+.admin-stats-number {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+/* Toast Notifications Admin */
+.admin-toast-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}
+
+.admin-toast {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    min-width: 350px;
+    animation: toastSlideIn 0.3s ease-out;
+}
+
+.admin-toast-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px 20px 0 0;
+    padding: 1rem 1.5rem 0.5rem;
+}
+
+.admin-toast-body {
+    padding: 1rem 1.5rem 1.5rem;
+    font-weight: 500;
+}
+
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Página de Administração - Recados
  */
@@ -13,6 +14,9 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     header('Location: ' . base_url('login'));
     exit;
 }
+
+// Definir título da página
+$pageTitle = 'Recados';
 
 // Processar ações
 $message = '';
@@ -45,265 +49,11 @@ $search = $_GET['search'] ?? '';
 $recados = !empty($search) ? searchRecados($search) : getAllRecados();
 $stats = calculateRecadosStats();
 ?>
-<!DOCTYPE html>
-<html lang="pt-BR">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recados - Admin</title>
+<?php include 'navbar.php'; ?>
 
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .navbar-brand {
-            font-weight: 600;
-        }
-
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            border-radius: 50px;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-danger {
-            border-radius: 50px;
-        }
-
-        .btn-sm {
-            border-radius: 20px;
-        }
-
-        .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
-
-        .stats-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .stats-card .card-body {
-            padding: 1.5rem;
-        }
-
-        .stats-number {
-            font-size: 2rem;
-            font-weight: 700;
-        }
-
-        .recado-card {
-            border-left: 4px solid #667eea;
-            transition: all 0.3s ease;
-        }
-
-        .recado-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .recado-message {
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            padding: 1rem;
-            margin: 0.5rem 0;
-            font-style: italic;
-            border-left: 3px solid #667eea;
-            transition: all 0.3s ease;
-        }
-
-        .recado-message.collapsed {
-            max-height: 60px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .recado-message.collapsed::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 20px;
-            background: linear-gradient(transparent, #f8f9fa);
-        }
-
-        .expand-btn {
-            background: none;
-            border: none;
-            color: #667eea;
-            font-size: 0.9em;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            border: 1px solid #667eea;
-        }
-
-        .expand-btn:hover {
-            color: white;
-            background-color: #667eea;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-        }
-
-        .expand-btn .btn-text {
-            transition: all 0.3s ease;
-        }
-
-        /* Toast Notification Styles */
-        .toast-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-        }
-
-        .toast {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            min-width: 350px;
-            animation: toastSlideIn 0.3s ease-out;
-        }
-
-        .toast-header {
-            background: transparent;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 20px 20px 0 0;
-            padding: 1rem 1.5rem 0.5rem;
-        }
-
-        .toast-body {
-            padding: 1rem 1.5rem 1.5rem;
-            font-weight: 500;
-        }
-
-        .toast-success .toast-header {
-            color: #198754;
-        }
-
-        .toast-danger .toast-header {
-            color: #dc3545;
-        }
-
-        .toast-warning .toast-header {
-            color: #fd7e14;
-        }
-
-        .toast-info .toast-header {
-            color: #0dcaf0;
-        }
-
-        @keyframes toastSlideIn {
-            0% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0);
-            }
-
-            99% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.5);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-        }
-
-        @keyframes toastSlideOut {
-            0% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-
-            1% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0);
-            }
-
-            100% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0);
-            }
-        }
-
-        .toast-slide-out {
-            animation: toastSlideOut 0.5s ease-in forwards;
-        }
-    </style>
 </head>
 
-<body class="pb-5">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="<?php echo base_url('admin'); ?>">
-                <i class="fas fa-heart me-2"></i>
-                Admin - Recados
-            </a>
-
-            <div class="navbar-nav ms-auto">
-                <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-user me-2"></i>Admin
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="<?php echo base_url('admin'); ?>">
-                                <i class="fas fa-gift me-2"></i>Presentes
-                            </a></li>
-                        <li><a class="dropdown-item" href="<?php echo base_url(); ?>" target="_blank">
-                                <i class="fas fa-external-link-alt me-2"></i>Ver Site
-                            </a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li>
-                            <form method="POST" class="d-inline">
-                                <input type="hidden" name="action" value="logout">
-                                <button type="submit" class="dropdown-item">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Sair
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container py-5">
         <!-- Toast Notification -->
         <?php if ($message): ?>
             <div class="toast-container">
@@ -443,30 +193,30 @@ $stats = calculateRecadosStats();
                                                 <?php echo formatDate($recado['data_envio'], 'd/m/Y H:i'); ?>
                                             </small>
                                         </div>
-                                        
+
                                         <div class="recado-message collapsed" id="message-<?php echo $recado['id']; ?>">
                                             <?php echo nl2br(htmlspecialchars($recado['mensagem'])); ?>
                                         </div>
-                                        
+
                                         <div class="text-center mt-3">
-                                            <button type="button" 
-                                                    class="expand-btn" 
-                                                    onclick="toggleMessage(<?php echo $recado['id']; ?>)"
-                                                    title="Expandir mensagem">
+                                            <button type="button"
+                                                class="expand-btn"
+                                                onclick="toggleMessage(<?php echo $recado['id']; ?>)"
+                                                title="Expandir mensagem">
                                                 <span class="btn-text d-flex align-items-center gap-2">+<span class="btn-text-text">Expandir</span></span>
                                             </button>
                                         </div>
-                                        
+
                                         <div class="d-flex justify-content-between align-items-center mt-3">
                                             <small class="text-muted">
                                                 <i class="fas fa-info-circle me-1"></i>
                                                 <?php echo formatDate($recado['data_envio'], 'd/m/Y H:i:s'); ?>
                                             </small>
-                                            
-                                            <button type="button" 
-                                                    class="btn btn-sm btn-outline-danger" 
-                                                    onclick="confirmDelete(<?php echo $recado['id']; ?>)"
-                                                    title="Remover">
+
+                                            <button type="button"
+                                                class="btn btn-sm btn-outline-danger"
+                                                onclick="confirmDelete(<?php echo $recado['id']; ?>)"
+                                                title="Remover">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
@@ -511,53 +261,10 @@ $stats = calculateRecadosStats();
         </div>
     </div>
 
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        $(document).ready(function() {
-            // Auto-hide toast notification
-            const toast = $('#notificationToast');
-            if (toast.length) {
-                setTimeout(function() {
-                    toast.addClass('toast-slide-out');
-                    setTimeout(function() {
-                        toast.fadeOut(300, function() {
-                            $(this).remove();
-                        });
-                    }, 300);
-                }, 2000);
-            }
-        });
-
-        // Função para confirmar exclusão
-        function confirmDelete(recadoId) {
-            $('#deleteRecadoId').val(recadoId);
-            $('#deleteModal').modal('show');
-        }
-
-        // Função para expandir/contrair mensagem
-        function toggleMessage(recadoId) {
-            const messageDiv = document.getElementById('message-' + recadoId);
-            const expandBtn = messageDiv.nextElementSibling.querySelector('.expand-btn');
-            const btnText = expandBtn.querySelector('.btn-text');
-            
-            if (messageDiv.classList.contains('collapsed')) {
-                // Expandir
-                messageDiv.classList.remove('collapsed');
-                btnText.textContent = '- Minimizar';
-                expandBtn.title = 'Minimizar mensagem';
-            } else {
-                // Contrair
-                messageDiv.classList.add('collapsed');
-                btnText.textContent = '+ Expandir';
-                expandBtn.title = 'Expandir mensagem';
-            }
-        }
+        // Funções já disponíveis no admin.js
+        // confirmDelete() e toggleMessage() são carregadas automaticamente
     </script>
-</body>
 
-</html>
+<?php include 'footer.php'; ?>
