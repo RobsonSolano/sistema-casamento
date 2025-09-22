@@ -21,9 +21,12 @@ $(document).ready(function() {
         animateElements();
         startCountdown();
         
-        // Mostrar modal de boas-vindas após um pequeno delay
+        // Verificar sessão antes de mostrar modal
         setTimeout(() => {
-            showWelcomeModal();
+            if (shouldShowWelcomeModal()) {
+                showWelcomeModal();
+            }
+            // A música será gerenciada pelo MusicController
         }, 1000);
     }
     
@@ -101,11 +104,12 @@ $(document).ready(function() {
             welcomeModal.hide();
             showNotification('🎵 Bem-vindos ao nosso casamento! 💕', 'success');
             
+            // Criar sessão para não mostrar o modal novamente
+            createWelcomeSession();
+            
             // Iniciar música após fechar o modal
             setTimeout(() => {
-                if (window.MusicController && window.MusicController.playMusic) {
-                    window.MusicController.playMusic();
-                }
+                tryStartMusic();
             }, 500);
         }
     }
@@ -272,9 +276,117 @@ $(document).ready(function() {
         return icons[type] || 'info-circle';
     }
     
+    /**
+     * Verifica se deve mostrar o modal de boas-vindas
+     */
+    function shouldShowWelcomeModal() {
+        const sessionData = localStorage.getItem('casamento_welcome_session');
+        
+        if (!sessionData) {
+            return true; // Não há sessão, mostrar modal
+        }
+        
+        try {
+            const session = JSON.parse(sessionData);
+            const now = Date.now();
+            const oneDayInMs = 24 * 60 * 60 * 1000; // 1 dia em milissegundos
+            
+            // Verificar se a sessão ainda é válida (menos de 1 dia)
+            if (now - session.timestamp < oneDayInMs) {
+                return false; // Sessão válida, não mostrar modal
+            } else {
+                // Sessão expirada, remover e mostrar modal
+                localStorage.removeItem('casamento_welcome_session');
+                return true;
+            }
+        } catch (error) {
+            // Erro ao parsear, remover dados corrompidos e mostrar modal
+            localStorage.removeItem('casamento_welcome_session');
+            return true;
+        }
+    }
+    
+    /**
+     * Cria uma sessão de boas-vindas
+     */
+    function createWelcomeSession() {
+        const sessionData = {
+            timestamp: Date.now(),
+            version: '1.0'
+        };
+        
+        localStorage.setItem('casamento_welcome_session', JSON.stringify(sessionData));
+    }
+    
+    /**
+     * Tenta iniciar a música de várias formas
+     */
+    function tryStartMusic() {
+        if (window.MusicController && window.MusicController.playMusic) {
+            window.MusicController.playMusic();
+        }
+    }
+    
+    /**
+     * Destrói a sessão de boas-vindas (para debug ou reset)
+     */
+    function destroyWelcomeSession() {
+        localStorage.removeItem('casamento_welcome_session');
+        showNotification('Sessão resetada. Modal será exibido novamente.', 'info');
+    }
+    
+    /**
+     * Função de debug para verificar status da sessão e música
+     */
+    function debugSessionAndMusic() {
+        const sessionData = localStorage.getItem('casamento_welcome_session');
+        const musicElement = document.getElementById('backgroundMusic');
+        
+        console.log('=== DEBUG SESSÃO E MÚSICA ===');
+        console.log('Sessão ativa:', sessionData ? 'Sim' : 'Não');
+        
+        if (sessionData) {
+            try {
+                const session = JSON.parse(sessionData);
+                const now = Date.now();
+                const timeDiff = now - session.timestamp;
+                const oneDayInMs = 24 * 60 * 60 * 1000;
+                
+                console.log('Timestamp da sessão:', new Date(session.timestamp));
+                console.log('Tempo decorrido:', Math.round(timeDiff / 1000 / 60), 'minutos');
+                console.log('Sessão válida:', timeDiff < oneDayInMs ? 'Sim' : 'Não');
+            } catch (error) {
+                console.log('Erro ao parsear sessão:', error);
+            }
+        }
+        
+        console.log('Elemento de música encontrado:', musicElement ? 'Sim' : 'Não');
+        if (musicElement) {
+            console.log('Música pausada:', musicElement.paused);
+            console.log('Tempo atual:', musicElement.currentTime);
+            console.log('Volume:', musicElement.volume);
+        }
+        
+        console.log('MusicController disponível:', window.MusicController ? 'Sim' : 'Não');
+        if (window.MusicController) {
+            console.log('Música tocando (MusicController):', window.MusicController.isMusicPlaying);
+        }
+        
+        return {
+            hasSession: !!sessionData,
+            musicElement: musicElement,
+            musicPaused: musicElement ? musicElement.paused : null,
+            musicController: window.MusicController
+        };
+    }
+
     // Expor funções globalmente se necessário
     window.MainController = {
         showNotification: showNotification,
-        showWelcomeModal: showWelcomeModal
+        showWelcomeModal: showWelcomeModal,
+        destroyWelcomeSession: destroyWelcomeSession,
+        shouldShowWelcomeModal: shouldShowWelcomeModal,
+        debugSessionAndMusic: debugSessionAndMusic,
+        tryStartMusic: tryStartMusic
     };
 });

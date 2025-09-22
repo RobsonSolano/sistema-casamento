@@ -60,7 +60,7 @@ $formattedGifts = array_map('formatGiftForDisplay', $paginatedGifts);
             <div class="col-12 col-md-12 col-lg-10 col-xl-8 mx-auto">
                 <!-- Header -->
                 <div class=" shadow-lg mb-4 rounded-4">
-                    <div class="card-body text-center">
+                    <div class="card-body text-center py-3">
                         <h1 class="couple-names mb-3">
                             <span class="name-1"><?php echo COUPLE_NAME_1; ?></span>
                             <span class="heart-icon mx-3">
@@ -72,22 +72,17 @@ $formattedGifts = array_map('formatGiftForDisplay', $paginatedGifts);
                             <i class="fas fa-calendar-alt me-2"></i>
                             <?php echo WEDDING_DATE; ?>
                         </p>
-                        <h2 class="mb-4">
+                        <h2 class="mb-4 text-white">
                             <i class="fas fa-gift me-2"></i>
                             Lista de Presentes
                         </h2>
 
                         <!-- Controles -->
                         <div class="d-flex justify-content-center gap-3 mb-3">
-                            <!-- <a href="/" class="btn btn-outline-secondary">
+                            <a href="index.php" class="btn btn-secondary btn-sm">
                                 <i class="fas fa-arrow-left me-2"></i>
-                                Voltar para Home
+                                Voltar
                             </a>
-                            
-                            <button class="btn btn-outline-danger btn-sm" id="musicToggleBtn">
-                                <i class="fas fa-pause me-2"></i>
-                                <span id="musicToggleText">Pausar Áudio</span>
-                            </button> -->
                         </div>
                     </div>
                 </div>
