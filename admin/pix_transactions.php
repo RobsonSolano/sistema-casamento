@@ -84,53 +84,6 @@ try {
 
 <?php include 'navbar.php'; ?>
 
-    <style>
-        .stats-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .stats-number {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .transaction-card {
-            border-left: 4px solid #007bff;
-            margin-bottom: 1rem;
-        }
-
-        .transaction-card.pending {
-            border-left-color: #ffc107;
-        }
-
-        .transaction-card.paid {
-            border-left-color: #28a745;
-        }
-
-        .transaction-card.confirmed {
-            border-left-color: #17a2b8;
-        }
-
-        .transaction-card.cancelled {
-            border-left-color: #dc3545;
-        }
-
-        .status-badge {
-            font-size: 0.8rem;
-            padding: 0.4rem 0.8rem;
-        }
-
-        .amount-display {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #28a745;
-        }
-    </style>
         <!-- Mensagens -->
         <?php if (isset($_SESSION['success_message'])): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -309,51 +262,12 @@ try {
         </div>
     </div>
 
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        let currentTransactionId = '';
-        let currentStatus = '';
-
+        // Usar função do admin.js para atualização de status
         function updateStatus(transactionId, status) {
-            currentTransactionId = transactionId;
-            currentStatus = status;
-
-            const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
-            modal.show();
+            prepareStatusUpdate(transactionId, status);
         }
-
-        document.getElementById('confirmButton').addEventListener('click', function() {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '';
-
-            const actionInput = document.createElement('input');
-            actionInput.type = 'hidden';
-            actionInput.name = 'action';
-            actionInput.value = 'update_status';
-
-            const transactionInput = document.createElement('input');
-            transactionInput.type = 'hidden';
-            transactionInput.name = 'transaction_id';
-            transactionInput.value = currentTransactionId;
-
-            const statusInput = document.createElement('input');
-            statusInput.type = 'hidden';
-            statusInput.name = 'status';
-            statusInput.value = currentStatus;
-
-            form.appendChild(actionInput);
-            form.appendChild(transactionInput);
-            form.appendChild(statusInput);
-
-            document.body.appendChild(form);
-            form.submit();
-        });
     </script>
 
 <?php include 'footer.php'; ?>

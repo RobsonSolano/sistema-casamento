@@ -29,64 +29,18 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 
     <!-- CSS Customizado -->
     <link rel="stylesheet" href="<?php echo base_url('assets/css/style.css'); ?>">
-    
-    <style>
-        /* Melhorias para navbar responsiva */
-        .navbar-toggler {
-            border: none;
-            padding: 0.25rem 0.5rem;
-        }
-        
-        .navbar-toggler:focus {
-            box-shadow: none;
-        }
-        
-        .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.85%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-        }
-        
-        @media (max-width: 991.98px) {
-            .navbar-collapse {
-                margin-top: 1rem;
-                padding-top: 1rem;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
-            }
-            
-            .navbar-nav .nav-link {
-                padding: 0.75rem 0;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
-            
-            .navbar-nav .nav-item:last-child .nav-link {
-                border-bottom: none;
-            }
-            
-            .dropdown-menu {
-                position: static !important;
-                transform: none !important;
-                border: none;
-                box-shadow: none;
-                background: rgba(255, 255, 255, 0.1);
-                margin-top: 0.5rem;
-            }
-            
-            .dropdown-item {
-                color: rgba(255, 255, 255, 0.85);
-                padding: 0.5rem 1rem;
-            }
-            
-            .dropdown-item:hover {
-                background: rgba(255, 255, 255, 0.1);
-                color: white;
-            }
-        }
-    </style>
+
+    <!-- CSS Customizado para navbar -->
+    <link rel="stylesheet" href="<?php echo base_url('assets/css/admin.css'); ?>">
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- JavaScript Admin Centralizado -->
+    <script src="<?php echo base_url('assets/js/admin.js'); ?>"></script>
 </head>
 
 <body class="admin-body pb-5">
