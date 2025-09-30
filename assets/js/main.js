@@ -9,6 +9,14 @@ $(document).ready(function() {
     // Variáveis globais
     let welcomeModal;
     
+    // Configuração global para modais mais rápidos
+    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+        // Reduzir tempo de transição padrão do Bootstrap
+        bootstrap.Modal.prototype._config = bootstrap.Modal.prototype._config || {};
+        bootstrap.Modal.prototype._config.backdropTransitionDuration = 150;
+        bootstrap.Modal.prototype._config.scrollTransitionDuration = 150;
+    }
+    
     // Inicialização
     init();
     
@@ -21,13 +29,13 @@ $(document).ready(function() {
         animateElements();
         startCountdown();
         
-        // Verificar sessão antes de mostrar modal
+        // Verificar sessão antes de mostrar modal - reduzido delay
         setTimeout(() => {
             if (shouldShowWelcomeModal()) {
                 showWelcomeModal();
             }
             // A música será gerenciada pelo MusicController
-        }, 1000);
+        }, 300);
     }
     
     /**
@@ -107,10 +115,10 @@ $(document).ready(function() {
             // Criar sessão para não mostrar o modal novamente
             createWelcomeSession();
             
-            // Iniciar música após fechar o modal
+            // Iniciar música após fechar o modal - reduzido delay
             setTimeout(() => {
                 tryStartMusic();
-            }, 500);
+            }, 200);
         }
     }
     
