@@ -4,60 +4,16 @@
  */
 
 // Variáveis globais para checkout
-let currentCheckoutData = null;
 let checkoutModal = null;
 let currentPixTransactionId = null; // ID da transação PIX atual
 
 /**
- * Abre o modal de checkout PIX simplificado
+ * Redireciona para a página de checkout
  */
-window.openCheckoutModal = function(button) {
+window.redirectToCheckout = function(button, returnUrl) {
     const giftId = button.getAttribute('data-gift-id');
-    const giftName = button.getAttribute('data-gift-name');
-    const giftValue = button.getAttribute('data-gift-value');
-    
-    currentCheckoutData = {
-        giftId: giftId,
-        giftName: giftName,
-        giftValue: giftValue
-    };
-    
-    // Atualizar informações do presente no modal
-    if (typeof $ !== 'undefined') {
-        $('#checkoutGiftName').text(giftName);
-        
-        let formattedValue = 'R$ 0,00';
-        if (giftValue && giftValue !== '' && giftValue !== '0') {
-            let cleanValue = giftValue.toString().replace(/[^\d,.-]/g, '').replace(',', '.');
-            const numericValue = parseFloat(cleanValue);
-            if (!isNaN(numericValue) && numericValue > 0) {
-                formattedValue = 'R$ ' + numericValue.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            }
-        }
-        
-        // Atualizar valor em ambos os lugares
-        $('#checkoutGiftValue').text(formattedValue);
-        $('#checkoutGiftValueStep2').text(formattedValue);
-        
-        // Gerar link do WhatsApp
-        generateWhatsAppLink(giftName, giftValue);
-        
-        // Limpar campos
-        $('#donorName').val('');
-        $('#donorPhone').val('');
-        
-        // Resetar transação PIX
-        currentPixTransactionId = null;
-        
-        // Resetar botão de confirmação
-        $('#confirmGiftBtn').prop('disabled', false).html('<i class="fas fa-gift me-2"></i>Confirmar Envio do Presente');
-    }
-    
-    // Mostrar modal
-    if (!checkoutModal) {
-        checkoutModal = new bootstrap.Modal(document.getElementById('checkoutModal'));
-    }
-    checkoutModal.show();
+    const url = `checkout.php?gift_id=${giftId}&return_url=${encodeURIComponent(returnUrl)}`;
+    window.location.href = url;
 }
 
 /**
@@ -104,7 +60,7 @@ ${donorName}`;
  * Confirma o envio do presente
  */
 window.confirmGift = function() {
-    if (!currentCheckoutData) {
+    if (!window.checkoutData) {
         if (typeof showNotification !== 'undefined') {
             showNotification('Erro: Dados do presente não encontrados', 'error');
         }
@@ -133,7 +89,7 @@ window.confirmGift = function() {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Salvando...';
     
     // Preparar dados
-    const cleanValue = currentCheckoutData.giftValue.toString().replace(/[^\d,.-]/g, '').replace(',', '.');
+    const cleanValue = window.checkoutData.giftValue.toString().replace(/[^\d,.-]/g, '').replace(',', '.');
     const numericValue = parseFloat(cleanValue);
     
     if (numericValue <= 0) {
@@ -179,11 +135,10 @@ function updatePixTransactionStatus(transactionId, newStatus) {
             }
             btn.innerHTML = '<i class="fas fa-check me-2"></i>Presente Confirmado!';
             
-            // Fechar modal após 2 segundos
+            // Redirecionar para página anterior após 2 segundos
             setTimeout(() => {
-                if (checkoutModal) {
-                    checkoutModal.hide();
-                }
+                const returnUrl = new URLSearchParams(window.location.search).get('return_url') || 'index.php';
+                window.location.href = returnUrl;
             }, 2000);
         } else {
             throw new Error(data.message || 'Erro ao atualizar status');
@@ -210,8 +165,8 @@ function createPixTransaction(amount, donorName, donorPhone, status) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            gift_id: currentCheckoutData.giftId,
-            gift_name: currentCheckoutData.giftName,
+            gift_id: window.checkoutData.giftId,
+            gift_name: window.checkoutData.giftName,
             amount: amount,
             donor_name: donorName,
             donor_phone: donorPhone,
@@ -229,11 +184,10 @@ function createPixTransaction(amount, donorName, donorPhone, status) {
             }
             btn.innerHTML = '<i class="fas fa-check me-2"></i>Presente Confirmado!';
             
-            // Fechar modal após 2 segundos
+            // Redirecionar para página anterior após 2 segundos
             setTimeout(() => {
-                if (checkoutModal) {
-                    checkoutModal.hide();
-                }
+                const returnUrl = new URLSearchParams(window.location.search).get('return_url') || 'index.php';
+                window.location.href = returnUrl;
             }, 2000);
         } else {
             throw new Error(data.message || 'Erro ao salvar presente');
@@ -288,7 +242,7 @@ window.copyPixKey = function() {
  * Salva transação PIX como iniciado
  */
 function savePixAsInitiated() {
-    if (!currentCheckoutData) {
+    if (!window.checkoutData) {
         return;
     }
     
@@ -310,7 +264,7 @@ function savePixAsInitiated() {
     }
     
     // Preparar dados
-    const cleanValue = currentCheckoutData.giftValue.toString().replace(/[^\d,.-]/g, '').replace(',', '.');
+    const cleanValue = window.checkoutData.giftValue.toString().replace(/[^\d,.-]/g, '').replace(',', '.');
     const numericValue = parseFloat(cleanValue);
     
     if (numericValue <= 0) {
@@ -324,8 +278,8 @@ function savePixAsInitiated() {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            gift_id: currentCheckoutData.giftId,
-            gift_name: currentCheckoutData.giftName,
+            gift_id: window.checkoutData.giftId,
+            gift_name: window.checkoutData.giftName,
             amount: numericValue,
             donor_name: donorName,
             donor_phone: donorPhone,
@@ -358,8 +312,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const donorNameEl = document.getElementById('donorName');
     if (donorNameEl) {
         donorNameEl.addEventListener('input', function() {
-            if (currentCheckoutData) {
-                generateWhatsAppLink(currentCheckoutData.giftName, currentCheckoutData.giftValue);
+            if (window.checkoutData) {
+                generateWhatsAppLink(window.checkoutData.giftName, window.checkoutData.giftValue);
             }
         });
     }
