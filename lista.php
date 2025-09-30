@@ -304,10 +304,10 @@ $formattedGifts = array_map('formatGiftForDisplay', $paginatedGifts);
                 </div>
                 <div class="modal-body">
                     <!-- Informações do Presente -->
-                    <div class="row mb-4">
+                    <div class="row mb-2">
                         <div class="col-12">
                             <div class="card border-0 bg-light">
-                                <div class="card-body text-center">
+                                <div class="card-body text-center"  style="display: flex; align-items: center; justify-content: space-between; padding-bottom:0; padding-top:0;">
                                     <h6 class="card-title text-muted mb-2">Presente Selecionado</h6>
                                     <h4 class="card-text text-primary mb-1" id="checkoutGiftName">Nome do Presente</h4>
                                     <h3 class="card-text text-success fw-bold" id="checkoutGiftValue">R$ 0,00</h3>

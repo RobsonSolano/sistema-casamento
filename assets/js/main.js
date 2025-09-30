@@ -289,10 +289,10 @@ $(document).ready(function() {
         try {
             const session = JSON.parse(sessionData);
             const now = Date.now();
-            const oneDayInMs = 24 * 60 * 60 * 1000; // 1 dia em milissegundos
+            const oneHourInMs = 60 * 60 * 1000; // 1 hora em milissegundos
             
-            // Verificar se a sessão ainda é válida (menos de 1 dia)
-            if (now - session.timestamp < oneDayInMs) {
+            // Verificar se a sessão ainda é válida (menos de 1 hora)
+            if (now - session.timestamp < oneHourInMs) {
                 return false; // Sessão válida, não mostrar modal
             } else {
                 // Sessão expirada, remover e mostrar modal
@@ -350,11 +350,11 @@ $(document).ready(function() {
                 const session = JSON.parse(sessionData);
                 const now = Date.now();
                 const timeDiff = now - session.timestamp;
-                const oneDayInMs = 24 * 60 * 60 * 1000;
+                const oneHourInMs = 60 * 60 * 1000;
                 
                 console.log('Timestamp da sessão:', new Date(session.timestamp));
                 console.log('Tempo decorrido:', Math.round(timeDiff / 1000 / 60), 'minutos');
-                console.log('Sessão válida:', timeDiff < oneDayInMs ? 'Sim' : 'Não');
+                console.log('Sessão válida:', timeDiff < oneHourInMs ? 'Sim' : 'Não');
             } catch (error) {
                 console.log('Erro ao parsear sessão:', error);
             }

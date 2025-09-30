@@ -1,8 +1,14 @@
 <?php
+
 /**
  * Configurações do Sistema
  * Arquivo de configuração principal do projeto
  */
+
+
+// Configurações de Ambiente
+define('ENVIRONMENT', 'development'); // development, production
+define('DEBUG_MODE', true);
 
 // Configurações do Site
 define('SITE_TITLE', 'Lista de Presentes - Casamento');
@@ -25,10 +31,17 @@ define('WHATSAPP_NUMBER', '5511996271186'); // WhatsApp para comprovantes
 
 
 // Configurações de Banco de Dados
-define('DB_HOST', 'mysql');
-define('DB_NAME', 'pessoal_casamento_mari_douglas');
-define('DB_USER', 'root');
-define('DB_PASS', '123');
+if (ENVIRONMENT === 'development') {
+    define('DB_HOST', 'mysql');
+    define('DB_NAME', 'pessoal_casamento_mari_douglas');
+    define('DB_USER', 'root');
+    define('DB_PASS', '123');
+} else {
+    define('DB_HOST', 'sql309.infinityfree.com');
+    define('DB_NAME', 'if0_39920714_casamento');
+    define('DB_USER', 'if0_39920714');
+    define('DB_PASS', 'w5yxygHhn6fc');
+}
 
 // Configurações de Email (se necessário futuramente)
 define('SMTP_HOST', 'smtp.gmail.com');
@@ -44,9 +57,6 @@ define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB
 define('ENCRYPTION_KEY', 'your-secret-key-here');
 define('SESSION_TIMEOUT', 3600); // 1 hora
 
-// Configurações de Ambiente
-define('ENVIRONMENT', 'development'); // development, production
-define('DEBUG_MODE', true);
 
 // Timezone
 date_default_timezone_set('America/Sao_Paulo');
@@ -62,4 +72,3 @@ if (ENVIRONMENT === 'production') {
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-?>

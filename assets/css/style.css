@@ -46,7 +46,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4169e1, #8db4cc);
     opacity: 0.8;
 }
 
@@ -121,7 +121,7 @@ body {
     left: -15px;
     width: 30px;
     height: 30px;
-    background: #51277a;
+    background: #4169e1;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -134,7 +134,7 @@ body {
     font-family: 'Cinzel', sans-serif !important;
     font-size: 4rem;
     font-weight: 400;
-    color: #51277a;
+    color: #4169e1;
     letter-spacing: 3px;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
@@ -155,7 +155,7 @@ body {
 .wedding-date {
     font-family: 'Playfair Display', serif;
     color: #fff;
-    font-weight: 500;
+    font-weight: 700;
     font-size: 2.8em;
     letter-spacing: 1px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -202,7 +202,7 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #B0CDDF 0%, #4169e1 100%);
     border: none;
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
@@ -497,13 +497,13 @@ body {
 
 /* Seção Deixe Seu Recado */
 .branch-icon {
-    color: #8B7355;
+    color: #4169e1;
     font-size: 1.5rem;
 }
 
 .section-title {
-    color: #8B7355;
-    font-weight: 400;
+    color: #4169e1;
+    font-weight: 600;
     font-size: 1.8rem;
     letter-spacing: 1px;
     margin-bottom: 0;
@@ -540,7 +540,7 @@ body {
 
 /* Countdown Section */
 .countdown-section {
-    background: #9E7C72;
+    background: #4169e1;
     padding: 80px 0;
     position: relative;
     z-index: 1;
@@ -584,7 +584,7 @@ body {
 .countdown-number {
     font-size: 3rem;
     font-weight: 700;
-    color: #8B7355;
+    color: #4169e1;
     line-height: 1;
     margin-bottom: 0.5rem;
 }
@@ -592,7 +592,7 @@ body {
 .countdown-label {
     font-size: 0.9rem;
     font-weight: 600;
-    color: #8B7355;
+    color: #4169e1;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -877,7 +877,7 @@ body {
 }
 
 .admin-card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #B0CDDF 0%, #4169e1 100%);
     color: white;
     border-radius: 15px 15px 0 0 !important;
     border: none;
@@ -885,7 +885,7 @@ body {
 
 /* Botões Admin */
 .admin-btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #B0CDDF 0%, #4169e1 100%);
     border: none;
     border-radius: 50px;
 }

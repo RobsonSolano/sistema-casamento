@@ -41,7 +41,6 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
         Seu navegador não suporta o elemento de áudio.
     </audio>
 
-
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="hero-content w-100">
@@ -74,15 +73,15 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
                             <!-- Welcome Message -->
                             <p class="welcome-message mb-4 text-white text-center">
                                 <!-- Mensagem carinhosa para todos os convidados que estão acessando a página -->
-                                <span class="d-block mb-2" style="font-size: 1.1em; font-weight: 300;">
+                                <span class="d-block mb-2" style="font-size: 1.1em; font-weight: 500;">
                                     Queridos familiares e amigos,
                                 </span>
-                                <span class="d-block mb-3" style="line-height: 1.6;">
+                                <span class="d-block mb-3" style="line-height: 1.6;font-weight: 500;">
                                     Este é um momento único em nossas vidas, onde dois corações se unem para formar uma só família.
                                     Será uma imensa alegria e honra ter você conosco neste dia tão especial,
                                     compartilhando conosco a celebração do nosso amor e da promessa de uma vida juntos.
                                 </span>
-                                <span class="d-block" style="font-style: italic; font-weight: 300;">
+                                <span class="d-block" style="font-style: italic; font-weight: 500;">
                                     Sua presença tornará este dia ainda mais inesquecível.
                                 </span>
                             </p>
@@ -298,10 +297,10 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
                 </div>
                 <div class="modal-body">
                     <!-- Informações do Presente -->
-                    <div class="row mb-4">
+                    <div class="row mb-2">
                         <div class="col-12">
                             <div class="card border-0 bg-light">
-                                <div class="card-body text-center">
+                                <div class="card-body text-center" style="display: flex; align-items: center; justify-content: space-between; padding-bottom:0; padding-top:0;">
                                     <h6 class="card-title text-muted mb-2">Presente Selecionado</h6>
                                     <h4 class="card-text text-primary mb-1" id="checkoutGiftName">Nome do Presente</h4>
                                     <h3 class="card-text text-success fw-bold" id="checkoutGiftValue">R$ 0,00</h3>
