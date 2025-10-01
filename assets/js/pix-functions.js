@@ -135,11 +135,12 @@ function updatePixTransactionStatus(transactionId, newStatus) {
             }
             btn.innerHTML = '<i class="fas fa-check me-2"></i>Presente Confirmado!';
             
-            // Redirecionar para página anterior após 2 segundos
+            // Mostrar modal de agradecimento
             setTimeout(() => {
-                const returnUrl = new URLSearchParams(window.location.search).get('return_url') || 'index.php';
-                window.location.href = returnUrl;
-            }, 2000);
+                if (window.thankYouModal) {
+                    window.thankYouModal.show();
+                }
+            }, 1000);
         } else {
             throw new Error(data.message || 'Erro ao atualizar status');
         }
@@ -184,11 +185,12 @@ function createPixTransaction(amount, donorName, donorPhone, status) {
             }
             btn.innerHTML = '<i class="fas fa-check me-2"></i>Presente Confirmado!';
             
-            // Redirecionar para página anterior após 2 segundos
+            // Mostrar modal de agradecimento
             setTimeout(() => {
-                const returnUrl = new URLSearchParams(window.location.search).get('return_url') || 'index.php';
-                window.location.href = returnUrl;
-            }, 2000);
+                if (window.thankYouModal) {
+                    window.thankYouModal.show();
+                }
+            }, 1000);
         } else {
             throw new Error(data.message || 'Erro ao salvar presente');
         }

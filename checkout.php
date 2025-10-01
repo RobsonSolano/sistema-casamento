@@ -196,17 +196,34 @@ $formattedGift = formatGiftForDisplay($gift);
                     </div>
                 </div>
 
-                <!-- Agradecimento -->
-                <div class="alert alert-success text-center">
-                    <h6 class="alert-heading">
-                        <i class="fas fa-heart me-2"></i>
-                        Muito Obrigado!
-                    </h6>
-                    <p class="mb-0">
-                        Sua contribuição é muito especial para nós!
-                        <br>
-                        <strong>Marislan e Douglas</strong>
-                    </p>
+                <!-- Modal de Agradecimento -->
+                <div class="modal fade" id="thankYouModal" tabindex="-1" aria-labelledby="thankYouModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-body text-center p-5">
+                                <div class="mb-4">
+                                    <i class="fas fa-heart fa-4x text-success"></i>
+                                </div>
+                                <h3 class="modal-title mb-3" id="thankYouModalLabel">
+                                    Muito Obrigado! 💕
+                                </h3>
+                                <p class="mb-4 text-muted">
+                                    Sua contribuição é muito especial para nós! <br>
+                                    <strong>Marislan e Douglas</strong>
+                                </p>
+                                <p class="mb-4">
+                                    <small class="text-muted">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        Presente confirmado com sucesso!
+                                    </small>
+                                </p>
+                                <button type="button" class="btn btn-success btn-lg px-5" id="thankYouOkBtn">
+                                    <i class="fas fa-home me-2"></i>
+                                    Voltar ao Início
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -260,6 +277,18 @@ $formattedGift = formatGiftForDisplay($gift);
             $('#donorName').on('input', function() {
                 generateWhatsAppLink();
             });
+            
+            // Configurar modal de agradecimento
+            const thankYouModal = new bootstrap.Modal(document.getElementById('thankYouModal'));
+            
+            // Event listener para o botão do modal de agradecimento
+            $('#thankYouOkBtn').on('click', function() {
+                const returnUrl = new URLSearchParams(window.location.search).get('return_url') || 'index.php';
+                window.location.href = returnUrl;
+            });
+            
+            // Expor modal globalmente para uso nas funções PIX
+            window.thankYouModal = thankYouModal;
         });
 
         /**
