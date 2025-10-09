@@ -211,12 +211,12 @@ function toggleMessage(recadoId) {
     if (messageDiv.classList.contains('collapsed')) {
         // Expandir
         messageDiv.classList.remove('collapsed');
-        btnText.textContent = '- Minimizar';
+        btnText.innerHTML = '-<span class="btn-text-text">Minimizar</span>';
         expandBtn.title = 'Minimizar mensagem';
     } else {
         // Contrair
         messageDiv.classList.add('collapsed');
-        btnText.textContent = '+ Expandir';
+        btnText.innerHTML = '+<span class="btn-text-text">Expandir</span>';
         expandBtn.title = 'Expandir mensagem';
     }
 }
@@ -248,16 +248,6 @@ function initAdmin() {
     const confirmButton = document.getElementById('confirmButton');
     if (confirmButton) {
         confirmButton.addEventListener('click', confirmStatusUpdate);
-    }
-
-    // Configurar formulário de exclusão de recado (se existir)
-    const deleteForm = document.getElementById('deleteForm');
-    if (deleteForm) {
-        deleteForm.addEventListener('submit', function(e) {
-            if (!confirm('Tem certeza que deseja remover este recado?')) {
-                e.preventDefault();
-            }
-        });
     }
 }
 

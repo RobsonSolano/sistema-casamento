@@ -148,8 +148,8 @@ $gifts = searchGifts($search, $statusFilter);
         <!-- Cabeçalho da Página -->
         <div class="row mb-4">
             <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
+                <div class="d-flex justify-content-center justify-content-lg-between align-items-center flex-column flex-lg-row ">
+                    <div class="text-center text-lg-start">
                         <h2 class="admin-page-title">
                             <i class="fas fa-cogs me-2"></i>Gerenciar Presentes
                         </h2>

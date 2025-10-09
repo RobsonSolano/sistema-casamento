@@ -60,8 +60,8 @@ $stats['total_pix_amount'] = getTotalConfirmedPixAmount();
         <!-- Cabeçalho da Página -->
         <div class="row mb-4">
             <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
+                <div class="d-flex justify-content-center justify-content-lg-between align-items-center flex-column flex-lg-row ">
+                    <div class="text-center text-lg-start">
                         <h2 class="admin-page-title">
                             <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                         </h2>
@@ -78,7 +78,7 @@ $stats['total_pix_amount'] = getTotalConfirmedPixAmount();
 
         <!-- Estatísticas -->
         <div class="row mb-4">
-            <div class="col-md-3 mb-3">
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 mb-3">
                 <div class="card admin-stats-card">
                     <div class="card-body text-center">
                         <i class="fas fa-gift fa-2x mb-2"></i>
@@ -87,30 +87,21 @@ $stats['total_pix_amount'] = getTotalConfirmedPixAmount();
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card admin-stats-card">
-                    <div class="card-body text-center">
-                        <i class="fas fa-check-circle fa-2x mb-2"></i>
-                        <div class="admin-stats-number"><?php echo $stats['available_gifts']; ?></div>
-                        <div>Disponíveis</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 mb-3">
                 <div class="card admin-stats-card">
                     <div class="card-body text-center">
                         <i class="fas fa-shopping-cart fa-2x mb-2"></i>
                         <div class="admin-stats-number"><?php echo $stats['purchased_gifts']; ?></div>
-                        <div>Comprados</div>
+                        <div>Compras</div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-3">
                 <div class="card admin-stats-card">
                     <div class="card-body text-center">
                         <i class="fas fa-dollar-sign fa-2x mb-2"></i>
                         <div class="admin-stats-number">R$ <?php echo number_format($stats['total_value'], 2, ',', '.'); ?></div>
-                        <div>Valor Total</div>
+                        <div>Valor Total (Soma dos presentes)</div>
                     </div>
                 </div>
             </div>
@@ -118,7 +109,7 @@ $stats['total_pix_amount'] = getTotalConfirmedPixAmount();
 
         <!-- Estatísticas PIX -->
         <div class="row mb-4">
-            <div class="col-md-3 mb-3">
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 mb-3">
                 <div class="card admin-stats-card">
                     <div class="card-body text-center">
                         <i class="fas fa-credit-card fa-2x mb-2"></i>
@@ -127,7 +118,7 @@ $stats['total_pix_amount'] = getTotalConfirmedPixAmount();
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 mb-3">
                 <div class="card admin-stats-card">
                     <div class="card-body text-center">
                         <i class="fas fa-check-circle fa-2x mb-2"></i>
@@ -136,7 +127,7 @@ $stats['total_pix_amount'] = getTotalConfirmedPixAmount();
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 mb-3">
                 <div class="card admin-stats-card">
                     <div class="card-body text-center">
                         <i class="fas fa-clock fa-2x mb-2"></i>
@@ -145,7 +136,7 @@ $stats['total_pix_amount'] = getTotalConfirmedPixAmount();
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-3">
                 <div class="card admin-stats-card">
                     <div class="card-body text-center">
                         <i class="fas fa-dollar-sign fa-2x mb-2"></i>
@@ -154,11 +145,7 @@ $stats['total_pix_amount'] = getTotalConfirmedPixAmount();
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Estatísticas Recados -->
-        <div class="row mb-4">
-            <div class="col-md-3 mb-3">
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-3">
                 <div class="card admin-stats-card">
                     <div class="card-body text-center">
                         <i class="fas fa-comments fa-2x mb-2"></i>
@@ -168,6 +155,7 @@ $stats['total_pix_amount'] = getTotalConfirmedPixAmount();
                 </div>
             </div>
         </div>
+
 
 
 <?php include 'footer.php'; ?>

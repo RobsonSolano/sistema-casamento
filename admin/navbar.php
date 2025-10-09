@@ -28,10 +28,10 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- CSS Customizado -->
-    <link rel="stylesheet" href="<?php echo base_url('assets/css/style.css'); ?>">
+    <link rel="stylesheet" href="<?php echo base_url('assets/css/style.css?v2'); ?>">
 
     <!-- CSS Customizado para navbar -->
-    <link rel="stylesheet" href="<?php echo base_url('assets/css/admin.css'); ?>">
+    <link rel="stylesheet" href="<?php echo base_url('assets/css/admin.css?v2'); ?>">
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -43,7 +43,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     <script src="<?php echo base_url('assets/js/admin.js'); ?>"></script>
 </head>
 
-<body class="admin-body pb-5">
+<body class="admin-body pb-5" id="admin-body">
     <!-- Navbar Admin -->
     <nav class="navbar navbar-expand-xl navbar-dark bg-dark">
         <div class="container">

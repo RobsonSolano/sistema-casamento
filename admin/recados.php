@@ -87,37 +87,37 @@ $stats = calculateRecadosStats();
         <?php endif; ?>
 
         <!-- Estatísticas -->
-        <div class="row mb-4">
-            <div class="col-md-3 mb-3">
+        <div class="row mb-4 cards-recados">
+            <div class="col-6 col-md-3 mb-3">
                 <div class="card stats-card">
                     <div class="card-body text-center">
                         <i class="fas fa-comments fa-2x mb-2"></i>
                         <div class="stats-number"><?php echo $stats['total_recados']; ?></div>
-                        <div>Total de Recados</div>
+                        <div>Total</div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-6 col-md-3 mb-3">
                 <div class="card stats-card">
-                    <div class="card-body text-center">
+                    <div class="card-body p-1 text-center">
                         <i class="fas fa-calendar-day fa-2x mb-2"></i>
                         <div class="stats-number"><?php echo $stats['today_recados']; ?></div>
                         <div>Hoje</div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-6 col-md-3 mb-3">
                 <div class="card stats-card">
-                    <div class="card-body text-center">
+                    <div class="card-body p-1 text-center">
                         <i class="fas fa-calendar-week fa-2x mb-2"></i>
                         <div class="stats-number"><?php echo $stats['week_recados']; ?></div>
                         <div>Esta Semana</div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-6 col-md-3 mb-3">
                 <div class="card stats-card">
-                    <div class="card-body text-center">
+                    <div class="card-body p-1 text-center">
                         <i class="fas fa-calendar-alt fa-2x mb-2"></i>
                         <div class="stats-number"><?php echo $stats['month_recados']; ?></div>
                         <div>Este Mês</div>
@@ -148,9 +148,12 @@ $stats = calculateRecadosStats();
                         <button type="submit" class="btn btn-primary me-2">
                             <i class="fas fa-search me-2"></i>Buscar
                         </button>
-                        <a href="<?php echo base_url('admin/recados'); ?>" class="btn btn-outline-secondary">
-                            <i class="fas fa-times me-2"></i>Limpar
-                        </a>
+                        <!-- Se existir uma busca, mostrar o botão de limpar -->
+                        <?php if (!empty($search)): ?>
+                            <a href="<?php echo base_url('admin/recados'); ?>" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Limpar
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </form>
             </div>
@@ -180,7 +183,7 @@ $stats = calculateRecadosStats();
                 <?php else: ?>
                     <div class="row">
                         <?php foreach ($recados as $recado): ?>
-                            <div class="col-12 col-lg-6">
+                            <div class="col-12 col-lg-6 mb-3 md-lg-2">
                                 <div class="card recado-card h-100">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-start mb-3">
