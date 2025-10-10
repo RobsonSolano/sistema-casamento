@@ -179,15 +179,15 @@ $formattedGifts = array_map('formatGiftForDisplay', $paginatedGifts);
                                                 </div>
 
                                                 <!-- Botão de Ação -->
-                                                <div class="mt-auto">
-                                                    <button class="btn btn-primary w-100 checkout-btn d-flex align-items-center justify-content-center gap-2"
+                                                <div class="mt-auto d-flex justify-content-center">
+                                                    <button class="btn btn-primary w-75 checkout-btn d-flex align-items-center justify-content-center gap-2"
                                                         data-gift-id="<?php echo $gift['id']; ?>"
                                                         data-gift-name="<?php echo htmlspecialchars($gift['titulo']); ?>"
                                                         data-gift-value="<?php echo $gift['valor']; ?>"
                                                         onclick="redirectToCheckout(this, '<?php echo $_SERVER['REQUEST_URI']; ?>')">
                                                         <i class="fas fa-gift me-2"></i>
-                                                        <span class="d-none d-md-block">Resgatar Presente</span>
-                                                        <span class="d-block d-md-none">Resgatar</span>
+                                                        <span class="d-none d-md-block">Comprar</span>
+                                                        <span class="d-block d-md-none">Comprar</span>
                                                     </button>
                                                 </div>
                                             </div>
@@ -316,7 +316,7 @@ $formattedGifts = array_map('formatGiftForDisplay', $paginatedGifts);
 
     <script>
         $(document).ready(function() {
-            // Evento do botão resgatar presente (mantido para compatibilidade)
+            // Evento do botão Comprar (mantido para compatibilidade)
             $('.resgatar-btn').click(function() {
                 const giftId = $(this).data('gift-id');
                 const giftName = $(this).data('gift-name');
