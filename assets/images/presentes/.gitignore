@@ -1,0 +1,7 @@
+# Ignorar todas as imagens nesta pasta
+*
+
+# Mas manter o .gitignore e README
+!.gitignore
+!README.md
+

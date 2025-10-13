@@ -46,7 +46,7 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
         <div class="hero-content w-100">
             <div class="container">
                 <div class="row justify-content-center">
-                    <div class="col-12 col-md-10 col-lg-10 col-xl-6">
+                    <div class="col-12 col-md-10 col-lg-10 col-xl-10">
                         <div class="couple-initials mb-4 d-flex flex-column align-items-center justify-content-center gap-3">
                             <div class="initials-box mb-4">
                                 <div class="feather-icon">
@@ -73,15 +73,21 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
                             <!-- Welcome Message -->
                             <p class="welcome-message mb-4 text-white text-center">
                                 <!-- Mensagem carinhosa para todos os convidados que estão acessando a página -->
-                                <span class="d-block mb-2" style="font-size: 1.1em; font-weight: 500;">
+                                <!-- <span class="d-block mb-2" style="font-size: 1.1em; font-weight: 500;">
                                     Queridos familiares e amigos,
+                                </span> -->
+                                <span class="d-block mb-3" style="line-height: 1.4;font-weight: 700;">
+                                    Se você está aqui, é porque faz parte da nossa história! 💫
+                                    <br>
+                                    Amigos e familiares, é com imensa alegria que convidamos vocês para o nosso casamento!
+
+                                    Depois de 14 anos juntos, entre risadas, aventuras, desafios e muito amor, percebemos que faltava algo essencial: o sacramento do matrimônio.
+                                    <br>
+                                    Mesmo fazendo tudo ao contrário (como sempre foi o nosso estilo 😄), entendemos que chegou o momento de entregar oficialmente nossa união nas mãos de Deus, que sempre foi o centro da nossa caminhada.
+
+                                    Queremos viver esse dia rodeados de pessoas especiais, porque não teria graça sem a sua presença para tornar tudo ainda mais alegre, abençoado e inesquecível. ❤️
                                 </span>
-                                <span class="d-block mb-3" style="line-height: 1.6;font-weight: 500;">
-                                    Este é um momento único em nossas vidas, onde dois corações se unem para formar uma só família.
-                                    Será uma imensa alegria e honra ter você conosco neste dia tão especial,
-                                    compartilhando conosco a celebração do nosso amor e da promessa de uma vida juntos.
-                                </span>
-                                <span class="d-block" style="font-style: italic; font-weight: 500;">
+                                <span class="d-block" style="font-style: italic; font-weight: 900;">
                                     Sua presença tornará este dia ainda mais inesquecível.
                                 </span>
                             </p>
@@ -149,11 +155,17 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
                     <?php if (!empty($formattedPreviewGifts)): ?>
                         <div class="row g-4 mb-5">
                             <?php foreach ($formattedPreviewGifts as $gift): ?>
-                                <div class="col-6 col-sm-6 col-md-6 col-xl-4">
+                                <div class="col-12 col-sm-6 col-md-6 col-xl-4">
                                     <div class="gift-preview-card">
                                         <!-- Imagem do Presente -->
-                                        <div class="gift-image mb-3 text-center">
-                                            <i class="fas fa-gift fa-3x text-primary"></i>
+                                        <div class="gift-image <?php echo !empty($gift['imagem_url']) ? 'mb-3' : 'mb-0'; ?> text-center">
+                                            <?php if (!empty($gift['imagem_url'])): ?>
+                                                <img src="<?php echo $gift['imagem_url']; ?>"
+                                                    alt="<?php echo htmlspecialchars($gift['titulo']); ?>"
+                                                    class="gift-product-image">
+                                            <?php else: ?>
+                                                <i class="fas fa-gift fa-3x text-primary"></i>
+                                            <?php endif; ?>
                                         </div>
 
                                         <!-- Informações do Presente -->
@@ -290,8 +302,8 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    
+
+
 
     <!-- Configuração JavaScript -->
     <script>
@@ -301,10 +313,10 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
 
     <!-- PIX Functions JS -->
     <script src="assets/js/pix-functions.js"></script>
-    
+
     <!-- Music Controller JS -->
     <script src="assets/js/music-controller.js"></script>
-    
+
     <!-- Custom JS -->
     <script src="assets/js/main.js"></script>
 </body>

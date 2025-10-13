@@ -26,19 +26,25 @@ function getGiftById($id) {
 /**
  * Adiciona novo presente
  */
-function addGift($titulo, $valor) {
+function addGift($titulo, $valor, $imagem = null) {
     $db = Database::getInstance();
-    $sql = "INSERT INTO presentes (titulo, valor, status, deletado) VALUES (?, ?, 0, 0)";
-    return $db->insert($sql, [$titulo, $valor]);
+    $sql = "INSERT INTO presentes (titulo, valor, imagem, status, deletado) VALUES (?, ?, ?, 0, 0)";
+    return $db->insert($sql, [$titulo, $valor, $imagem]);
 }
 
 /**
  * Atualiza presente
  */
-function updateGift($id, $titulo, $valor, $status) {
+function updateGift($id, $titulo, $valor, $status, $imagem = null) {
     $db = Database::getInstance();
-    $sql = "UPDATE presentes SET titulo = ?, valor = ?, status = ? WHERE id = ? AND deletado = 0";
-    return $db->update($sql, [$titulo, $valor, $status, $id]);
+    
+    if ($imagem !== null) {
+        $sql = "UPDATE presentes SET titulo = ?, valor = ?, status = ?, imagem = ? WHERE id = ? AND deletado = 0";
+        return $db->update($sql, [$titulo, $valor, $status, $imagem, $id]);
+    } else {
+        $sql = "UPDATE presentes SET titulo = ?, valor = ?, status = ? WHERE id = ? AND deletado = 0";
+        return $db->update($sql, [$titulo, $valor, $status, $id]);
+    }
 }
 
 /**
@@ -158,11 +164,15 @@ function validateGiftData($titulo, $valor) {
  * Formata presente para exibição
  */
 function formatGiftForDisplay($gift) {
+    require_once __DIR__ . '/../helpers/image_upload.php';
+    
     return [
         'id' => $gift['id'],
         'titulo' => $gift['titulo'],
         'valor' => formatCurrency($gift['valor']),
         'valor_raw' => $gift['valor'],
+        'imagem' => $gift['imagem'] ?? null,
+        'imagem_url' => getGiftImageUrl($gift['imagem'] ?? null),
         'status' => $gift['status'],
         'status_text' => $gift['status'] == 1 ? 'Comprado' : 'Disponível',
         'data_criacao' => formatDate($gift['data_criacao'], 'd/m/Y H:i')

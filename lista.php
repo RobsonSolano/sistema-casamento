@@ -162,16 +162,22 @@ $formattedGifts = array_map('formatGiftForDisplay', $paginatedGifts);
                             <div class="row">
                                 <?php foreach ($formattedGifts as $gift): ?>
                                     <div class="col-12 col-sm-6 col-md-6 col-lg-4 mb-4">
-                                        <div class="card gift-card h-100 ">
-                                            <div class="card-body d-flex flex-column ">
+                                            <div class="card gift-card h-100 ">
+                                                <div class="card-body d-flex flex-column ">
 
-                                                <!-- Imagem do Presente -->
-                                                <div class="gift-image mb-0 text-center">
-                                                    <i class="fas fa-gift fa-3x text-primary"></i>
-                                                </div>
+                                                    <!-- Imagem do Presente -->
+                                                    <div class="gift-image <?php echo !empty($gift['imagem_url']) ? 'mb-3' : 'mb-0'; ?> text-center">
+                                                        <?php if (!empty($gift['imagem_url'])): ?>
+                                                            <img src="<?php echo $gift['imagem_url']; ?>" 
+                                                                 alt="<?php echo htmlspecialchars($gift['titulo']); ?>" 
+                                                                 class="gift-product-image">
+                                                        <?php else: ?>
+                                                            <i class="fas fa-gift fa-3x text-primary"></i>
+                                                        <?php endif; ?>
+                                                    </div>
 
-                                                <!-- Informações do Presente -->
-                                                <h4 class="card-title text-center"><?php echo htmlspecialchars($gift['titulo']); ?></h4>
+                                                    <!-- Informações do Presente -->
+                                                    <h4 class="card-title text-center"><?php echo htmlspecialchars($gift['titulo']); ?></h4>
 
                                                 <!-- Preço -->
                                                 <div class="price-section mb-3">

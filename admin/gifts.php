@@ -7,6 +7,7 @@ try {
     require_once '../php/config.php';
     require_once '../helpers/functions.php';
     require_once '../functions/gifts_db.php';
+    require_once '../helpers/image_upload.php';
 } catch (Exception $e) {
     die("Erro ao carregar arquivos: " . $e->getMessage());
 } catch (Error $e) {
@@ -40,18 +41,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         case 'add_gift':
             $titulo = sanitizeInput($_POST['titulo'] ?? '');
             $valor = floatval($_POST['valor'] ?? 0);
+            $imagemFilename = null;
+            
+            // Processar upload de imagem se houver
+            if (isset($_FILES['imagem']) && $_FILES['imagem']['error'] !== UPLOAD_ERR_NO_FILE) {
+                $uploadResult = uploadGiftImage($_FILES['imagem']);
+                if ($uploadResult['success']) {
+                    $imagemFilename = $uploadResult['filename'];
+                } else {
+                    $message = $uploadResult['error'];
+                    $messageType = 'danger';
+                    break;
+                }
+            }
             
             if ($titulo && $valor > 0) {
-                if (addGift($titulo, $valor)) {
+                if (addGift($titulo, $valor, $imagemFilename)) {
                     $message = 'Presente adicionado com sucesso!';
                     $messageType = 'success';
                 } else {
                     $message = 'Erro ao adicionar presente.';
                     $messageType = 'danger';
+                    // Deletar imagem se falhou ao salvar no banco
+                    if ($imagemFilename) {
+                        deleteGiftImage($imagemFilename);
+                    }
                 }
             } else {
                 $message = 'Por favor, preencha todos os campos corretamente.';
                 $messageType = 'warning';
+                // Deletar imagem se validação falhou
+                if ($imagemFilename) {
+                    deleteGiftImage($imagemFilename);
+                }
             }
             break;
             
@@ -59,18 +81,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = intval($_POST['gift_id'] ?? 0);
             $titulo = sanitizeInput($_POST['titulo'] ?? '');
             $valor = floatval($_POST['valor'] ?? 0);
+            $imagemFilename = null;
+            
+            // Buscar presente atual para pegar imagem antiga
+            $currentGift = getGiftById($id);
+            $oldImage = $currentGift['imagem'] ?? null;
+            
+            // Processar upload de nova imagem se houver
+            if (isset($_FILES['imagem']) && $_FILES['imagem']['error'] !== UPLOAD_ERR_NO_FILE) {
+                $uploadResult = uploadGiftImage($_FILES['imagem']);
+                if ($uploadResult['success']) {
+                    $imagemFilename = $uploadResult['filename'];
+                    // Deletar imagem antiga se houver
+                    if ($oldImage) {
+                        deleteGiftImage($oldImage);
+                    }
+                } else {
+                    $message = $uploadResult['error'];
+                    $messageType = 'danger';
+                    break;
+                }
+            }
             
             if ($id && $titulo && $valor > 0) {
-                if (updateGift($id, $titulo, $valor, 0)) {
+                if (updateGift($id, $titulo, $valor, 0, $imagemFilename)) {
                     $message = 'Presente atualizado com sucesso!';
                     $messageType = 'success';
                 } else {
                     $message = 'Erro ao atualizar presente.';
                     $messageType = 'danger';
+                    // Restaurar imagem antiga se falhou
+                    if ($imagemFilename) {
+                        deleteGiftImage($imagemFilename);
+                    }
                 }
             } else {
                 $message = 'Por favor, preencha todos os campos corretamente.';
                 $messageType = 'warning';
+                // Deletar nova imagem se validação falhou
+                if ($imagemFilename) {
+                    deleteGiftImage($imagemFilename);
+                }
             }
             break;
             
@@ -78,7 +129,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = intval($_POST['gift_id'] ?? 0);
             
             if ($id) {
+                // Buscar presente para deletar imagem
+                $gift = getGiftById($id);
+                
                 if (deleteGift($id)) {
+                    // Deletar imagem se houver
+                    if (isset($gift['imagem']) && $gift['imagem']) {
+                        deleteGiftImage($gift['imagem']);
+                    }
                     $message = 'Presente removido com sucesso!';
                     $messageType = 'success';
                 } else {
@@ -203,18 +261,24 @@ $gifts = searchGifts($search, $statusFilter);
                 </h5>
             </div>
             <div class="card-body">
-                <form method="POST" class="row g-3">
+                <form method="POST" enctype="multipart/form-data" class="row g-3">
                     <input type="hidden" name="action" value="add_gift">
-                    <div class="col-12 col-lg-6">
+                    <div class="col-12 col-lg-5">
                         <label for="titulo" class="form-label">Nome do Presente</label>
                         <input type="text" class="form-control admin-form-control" id="titulo" name="titulo" required>
                     </div>
-                    <div class="col-12 col-md-6 col-lg-3">
+                    <div class="col-12 col-md-6 col-lg-2">
                         <label for="valor" class="form-label">Valor (R$)</label>
                         <input type="number" class="form-control admin-form-control" id="valor" name="valor" 
                                step="0.01" min="0" required>
                     </div>
-                    <div class="col-12 col-md-6 col-lg-3 d-flex align-items-end">
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <label for="imagem" class="form-label">Imagem (opcional)</label>
+                        <input type="file" class="form-control admin-form-control" id="imagem" name="imagem" 
+                               accept="image/jpeg,image/jpg,image/png,image/webp,image/gif">
+                        <small class="text-muted">JPG, PNG, WEBP ou GIF (max 5MB)</small>
+                    </div>
+                    <div class="col-12 col-lg-2 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary admin-btn-primary w-100">
                             <i class="fas fa-plus me-2"></i>Adicionar
                         </button>
@@ -295,7 +359,7 @@ $gifts = searchGifts($search, $statusFilter);
                                                     <h5 class="modal-title">Editar Presente</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                 </div>
-                                                <form method="POST">
+                                                <form method="POST" enctype="multipart/form-data">
                                                     <div class="modal-body">
                                                         <input type="hidden" name="action" value="update_gift">
                                                         <input type="hidden" name="gift_id" value="<?php echo $gift['id']; ?>">
@@ -310,6 +374,21 @@ $gifts = searchGifts($search, $statusFilter);
                                                             <input type="number" class="form-control admin-form-control" 
                                                                    id="edit_valor_<?php echo $gift['id']; ?>" name="valor" 
                                                                    value="<?php echo $gift['valor']; ?>" step="0.01" min="0" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="edit_imagem_<?php echo $gift['id']; ?>" class="form-label">Imagem</label>
+                                                            <?php if (!empty($gift['imagem'])): ?>
+                                                                <div class="mb-2">
+                                                                    <img src="<?php echo getGiftImageUrl($gift['imagem']); ?>" 
+                                                                         alt="<?php echo htmlspecialchars($gift['titulo']); ?>" 
+                                                                         style="max-width: 150px; border-radius: 8px;">
+                                                                    <p class="text-muted small mb-0">Imagem atual</p>
+                                                                </div>
+                                                            <?php endif; ?>
+                                                            <input type="file" class="form-control admin-form-control" 
+                                                                   id="edit_imagem_<?php echo $gift['id']; ?>" name="imagem" 
+                                                                   accept="image/jpeg,image/jpg,image/png,image/webp,image/gif">
+                                                            <small class="text-muted">Envie uma nova imagem para substituir (JPG, PNG, WEBP ou GIF, max 5MB)</small>
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
