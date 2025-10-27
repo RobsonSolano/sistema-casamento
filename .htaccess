@@ -32,6 +32,12 @@ RewriteRule ^recados/?$ admin/recados.php [L]
 # Rota /api/send_recado - API para envio de recados
 RewriteRule ^api/send_recado/?$ api/send_recado.php [L]
 
+# Rota /api/save_pix_transaction - API para salvar transação PIX
+RewriteRule ^api/save_pix_transaction/?$ api/save_pix_transaction.php [L]
+
+# Rota /api/update_pix_status - API para atualizar status PIX
+RewriteRule ^api/update_pix_status/?$ api/update_pix_status.php [L]
+
 # Rota /api/generate_pix - API para geração de PIX
 RewriteRule ^api/generate_pix/?$ api/generate_pix.php [L]
 

@@ -24,10 +24,10 @@ define('WEDDING_DATE', '13 | 12 | 2025');
 define('WELCOME_MESSAGE', 'Estamos muito felizes em compartilhar este momento especial com vocês!');
 
 // Configurações de Pagamento PIX
-define('PIX_KEY', '11996271186'); // Chave PIX (celular)
+define('PIX_KEY', '11953690303'); // Chave PIX (celular)
 define('PIX_KEY_TYPE', 'phone'); // Tipo da chave PIX
 define('PIX_OWNER_NAME', 'MARISLAN E DOUGLAS'); // Nome do titular
-define('WHATSAPP_NUMBER', '5511996271186'); // WhatsApp para comprovantes
+define('WHATSAPP_NUMBER', '5511953690303'); // WhatsApp para comprovantes
 
 
 // Configurações de Banco de Dados

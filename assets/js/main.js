@@ -388,6 +388,7 @@ $(document).ready(function() {
         };
     }
 
+
     // Expor funções globalmente se necessário
     window.MainController = {
         showNotification: showNotification,

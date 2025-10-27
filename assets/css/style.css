@@ -1,6 +1,18 @@
 /* Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Dancing+Script:wght@400;500;600;700&family=Great+Vibes&family=Cinzel:wght@400;500;600;700&display=swap');
 
+/* Font local Tempting */
+@font-face {
+    font-family: 'Tempting';
+    src: url('../fonts/tempting/Tempting - PERSONAL USE ONLY.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+html{
+    overflow-x: hidden;
+}
+
 /* Reset e Base */
 * {
     margin: 0;
@@ -17,13 +29,13 @@ body {
 
 @media (max-width: 768px) {
     body {
-        padding: 4em 0;
+        padding-top: 4em;
     }
 
-    #admin-body .card{
+    #admin-body .card {
         padding: 1 !important;
     }
-    
+
     #admin-body .cards-recados .card-body {
         padding: 0 !important;
     }
@@ -153,7 +165,7 @@ body {
 
 /* Couple Names */
 .couple-names span {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Inter', serif;
     text-align: center;
     font-weight: 700;
     color: #fff;
@@ -165,14 +177,17 @@ body {
 
 /* Wedding Date */
 .wedding-date {
-    font-family: 'Playfair Display', serif;
+    
     color: #fff;
-    font-weight: 700;
-    font-size: 2.8em;
+    font-weight: 500;
+    font-size: 3em;
     letter-spacing: 1px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+.wedding-date span {
+    font-family: 'Tempting', cursive !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
 
 @media (max-width: 768px) {
     .initials {
@@ -325,7 +340,7 @@ body {
         max-width: none;
         transform: translateY(-100%);
     }
-    
+
     .toast-notification.show {
         transform: translateY(0);
     }
@@ -573,6 +588,7 @@ body {
 
 /* Reduzir animações em dispositivos com preferência por movimento reduzido */
 @media (prefers-reduced-motion: reduce) {
+
     .modal.fade .modal-dialog,
     .modal-backdrop,
     .welcome-modal-content,
@@ -591,7 +607,7 @@ body {
 
 .section-title {
     color: #4169e1;
-    font-weight: 600;
+    font-weight: 800;
     font-size: 1.8rem;
     letter-spacing: 1px;
     margin-bottom: 0;
@@ -628,7 +644,11 @@ body {
 
 /* Countdown Section */
 .countdown-section {
-    background: #4169e1;
+    background: linear-gradient(135deg, #67aef0 0%, #214992 100%);
+    /* background-image: url('../images/bg-countdown.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat; */
     padding: 80px 0;
     position: relative;
     z-index: 1;
@@ -639,7 +659,7 @@ body {
 }
 
 .countdown-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Inter', serif;
     font-size: 2.8rem;
     font-weight: 600;
     margin-bottom: 3rem;
@@ -801,6 +821,30 @@ body {
 }
 
 
+/* Badge de status */
+.status-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.available {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.purchased {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+
 .gift-image {
     min-height: 80px;
     display: flex;
@@ -939,9 +983,19 @@ body {
 }
 
 @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
 }
 
 /* =====================================================
@@ -1059,8 +1113,690 @@ body {
         opacity: 0;
         transform: translateY(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* =====================================================
+   SEÇÃO GALERIA DE FOTOS
+   ===================================================== */
+
+.gallery-section {
+    position: relative;
+    height: 60vh;
+    min-height: 400px;
+    overflow: hidden;
+}
+
+.gallery-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.gallery-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+}
+
+.gallery-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.play-button-container {
+    text-align: center;
+    color: white;
+}
+
+.play-button {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-size: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin: 0 auto 2rem;
+}
+
+.play-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.play-button i {
+    margin-left: 8px;
+    /* Ajuste visual para centralizar o ícone de play */
+}
+
+.gallery-text {
+    font-size: 1.2rem;
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    margin: 0;
+}
+
+/* Responsive para galeria */
+@media (max-width: 768px) {
+    .gallery-section {
+        height: 50vh;
+        min-height: 300px;
+    }
+
+    .play-button {
+        width: 120px;
+        height: 120px;
+        font-size: 2.5rem;
+    }
+
+    .gallery-text {
+        font-size: 1rem;
+    }
+}
+
+/* Modal de Tela Cheia */
+.fullscreen-modal-content {
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.fullscreen-modal-header {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    position: relative;
+    z-index: 10;
+}
+
+.fullscreen-modal-header .modal-title {
+    font-family: 'Inter', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #F5F5DC;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.fullscreen-modal-header .btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+.fullscreen-modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+.fullscreen-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.fullscreen-modal-body {
+    padding: 0;
+    height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    position: relative;
+}
+
+.fullscreen-image-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.fullscreen-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 0;
+}
+
+/* Botões flutuantes na tela cheia */
+.fullscreen-modal-body .gallery-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.fullscreen-modal-body .gallery-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.fullscreen-modal-body .gallery-prev {
+    left: 2rem;
+}
+
+.fullscreen-modal-body .gallery-next {
+    right: 2rem;
+}
+
+.fullscreen-modal-body .gallery-fullscreen {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    transform: none;
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+}
+
+.fullscreen-modal-body .gallery-fullscreen:hover {
+    transform: scale(1.1);
+}
+
+/* Responsive para tela cheia */
+@media (max-width: 768px) {
+    .fullscreen-modal-header {
+        padding: 1rem;
+    }
+
+    .fullscreen-controls {
+        gap: 0.5rem;
+    }
+
+    .fullscreen-controls .gallery-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .fullscreen-modal-body .gallery-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+
+    .fullscreen-modal-body .gallery-prev {
+        left: 1rem;
+    }
+
+    .fullscreen-modal-body .gallery-next {
+        right: 1rem;
+    }
+
+    .fullscreen-modal-body .gallery-fullscreen {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+}
+
+/* =====================================================
+   SEÇÃO DA IGREJA
+   ===================================================== */
+
+.church-section {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.church-content {
+    padding: 4rem 3rem;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    min-height: 500px;
+}
+
+.church-text {
+    max-width: 600px;
+}
+
+.church-title {
+    font-family: 'Inter', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #4169e1;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.church-description {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 1.5rem;
+    text-align: justify;
+}
+
+.church-image {
+    height: 100%;
+    min-height: 500px;
+    overflow: hidden;
+    position: relative;
+}
+
+.church-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.church-image:hover img {
+    transform: scale(1.05);
+}
+
+/* Responsive para igreja */
+@media (max-width: 992px) {
+    .church-content {
+        padding: 3rem 2rem;
+        min-height: 400px;
+    }
+
+    .church-title {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .church-description {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    .church-image {
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .church-content {
+        padding: 2rem 1.5rem;
+        min-height: 350px;
+    }
+
+    .church-title {
+        font-size: 1.8rem;
+    }
+
+    .church-description {
+        font-size: 1rem;
+        text-align: left;
+    }
+
+    .church-image {
+        min-height: 250px;
+    }
+}
+
+/* =====================================================
+   RODAPÉ
+   ===================================================== */
+
+.footer-section {
+    background: linear-gradient(135deg, #4169e1 0%, #667eea 100%);
+    padding: 80px 0;
+    position: relative;
+    z-index: 1;
+}
+
+.footer-content {
+    color: white;
+}
+
+.footer-icon {
+    animation: heartbeat 2s ease-in-out infinite;
+}
+
+.footer-icon i {
+    font-size: 2.5rem;
+    color: #F5F5DC;
+}
+
+.footer-title {
+    font-family: 'Inter', serif;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #F5F5DC;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.footer-message {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 400;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.footer-signature {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.footer-signature p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-style: italic;
+    margin-bottom: 0.5rem;
+}
+
+.couple-signature {
+    font-family: 'Tempting', cursive;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #F5F5DC;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    letter-spacing: 2px;
+}
+
+.couple-signature.principal {
+    font-size: 4rem !important;
+    font-weight: 500;
+    color: #fff !important;
+}
+
+@media (max-width: 1024px) {
+    .couple-signature.principal {
+        font-size: 3rem !important;
+    }
+}
+
+/* Responsive para rodapé */
+@media (max-width: 768px) {
+
+    .couple-signature.principal {
+        font-size: 2.5rem !important;
+        text-align: center !important;
+    }
+
+    .footer-section {
+        padding: 60px 0;
+    }
+
+    .footer-title {
+        font-size: 1.8rem;
+    }
+
+    .footer-message {
+        font-size: 1.1rem;
+    }
+
+    .couple-signature {
+        font-size: 2rem;
+    }
+
+    .footer-icon i {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer-title {
+        font-size: 1.6rem;
+    }
+
+    .footer-message {
+        font-size: 1rem;
+    }
+
+    .couple-signature {
+        font-size: 1.8rem;
+    }
+}
+
+/* =====================================================
+   QR CODE PIX
+   ===================================================== */
+
+.qr-code-display {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+}
+
+.qr-code-info {
+    background: rgba(248, 249, 250, 0.8);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.qr-code-info p {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.qr-code-info strong {
+    color: #4169e1;
+}
+
+/* Animação para o QR Code */
+.qr-code-display img {
+    transition: transform 0.3s ease;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.qr-code-display img:hover {
+    transform: scale(1.05);
+}
+
+/* Botão de download do QR Code */
+.qr-code-info .btn {
+    border-radius: 20px;
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.qr-code-info .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(65, 105, 225, 0.3);
+}
+
+/* Estilos para alerta de valor PIX */
+.alert-warning {
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    color: #856404;
+    border-radius: 10px;
+}
+
+.alert-warning strong {
+    color: #4169e1;
+}
+
+/* Estilos para input do código PIX */
+#pixCodeDisplay {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    background: rgba(248, 249, 250, 0.8);
+    border: 2px solid rgba(65, 105, 225, 0.2);
+    border-radius: 10px;
+}
+
+#pixCodeDisplay:focus {
+    border-color: #4169e1;
+    box-shadow: 0 0 0 0.2rem rgba(65, 105, 225, 0.25);
+}
+
+/* Botão de copiar PIX */
+.btn-outline-info {
+    border-color: #4169e1;
+    color: #4169e1;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-info:hover {
+    background-color: #4169e1;
+    border-color: #4169e1;
+    transform: translateY(-1px);
+}
+
+/* Cards de métodos PIX */
+.pix-method-card {
+    background: rgba(248, 249, 250, 0.8);
+    border-radius: 15px;
+    padding: 1.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.method-header {
+    display: flex;
+    align-items: center;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.method-header i {
+    font-size: 1.2rem;
+}
+
+.method-header h6 {
+    color: #4169e1;
+    font-size: 1rem;
+}
+
+.pix-method-card .input-group {
+    margin-bottom: 1rem;
+}
+
+.pix-method-card .form-control {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(65, 105, 225, 0.2);
+}
+
+.pix-method-card .form-control:focus {
+    border-color: #4169e1;
+    box-shadow: 0 0 0 0.2rem rgba(65, 105, 225, 0.25);
+}
+
+.pix-method-card .btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.pix-method-card .btn:hover {
+    transform: translateY(-1px);
+}
+
+/* Informações bancárias */
+.pix-method-card small {
+    line-height: 1.4;
+}
+
+.pix-method-card small strong {
+    color: #4169e1;
+    font-weight: 600;
+}
+
+/* QR Code dentro do card */
+.pix-method-card .qr-code-display {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.pix-method-card .qr-code-display img {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.pix-method-card .qr-code-display img:hover {
+    transform: scale(1.05);
+}
+
+/* Responsive para métodos PIX */
+@media (max-width: 768px) {
+    .pix-method-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .pix-method-card .qr-code-display {
+        padding: 0.75rem;
+    }
+
+    .pix-method-card .qr-code-display img {
+        max-width: 150px !important;
+    }
+
+    #pixCodeDisplay {
+        font-size: 0.7rem;
+    }
+
+    .method-header h6 {
+        font-size: 0.9rem;
+    }
+}
+
+#checkout {}
+
+#checkout .main-card {
+    background: rgba(255, 255, 255, 0.7);
 }

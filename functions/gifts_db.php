@@ -64,6 +64,27 @@ function toggleGiftStatus($id) {
     return $db->update($sql, [$newStatus, $id]);
 }
 
+
+/**
+ * Marca presente como comprado (confirmação final)
+ */
+function markGiftAsPurchased($id) {
+    $db = Database::getInstance();
+    
+    $sql = "UPDATE presentes SET status = 1 WHERE id = ? AND deletado = 0";
+    return $db->update($sql, [$id]);
+}
+
+/**
+ * Volta presente para disponível (cancela compra)
+ */
+function markGiftAsAvailable($id) {
+    $db = Database::getInstance();
+    
+    $sql = "UPDATE presentes SET status = 0 WHERE id = ? AND deletado = 0";
+    return $db->update($sql, [$id]);
+}
+
 /**
  * Remove presente (soft delete)
  */
@@ -166,6 +187,21 @@ function validateGiftData($titulo, $valor) {
 function formatGiftForDisplay($gift) {
     require_once __DIR__ . '/../helpers/image_upload.php';
     
+    // Determinar texto do status
+    $statusText = 'Disponível';
+    $statusClass = 'available';
+    
+    switch ($gift['status']) {
+        case 1:
+            $statusText = 'Comprado';
+            $statusClass = 'purchased';
+            break;
+        default:
+            $statusText = 'Disponível';
+            $statusClass = 'available';
+            break;
+    }
+    
     return [
         'id' => $gift['id'],
         'titulo' => $gift['titulo'],
@@ -174,7 +210,8 @@ function formatGiftForDisplay($gift) {
         'imagem' => $gift['imagem'] ?? null,
         'imagem_url' => getGiftImageUrl($gift['imagem'] ?? null),
         'status' => $gift['status'],
-        'status_text' => $gift['status'] == 1 ? 'Comprado' : 'Disponível',
+        'status_text' => $statusText,
+        'status_class' => $statusClass,
         'data_criacao' => formatDate($gift['data_criacao'], 'd/m/Y H:i')
     ];
 }

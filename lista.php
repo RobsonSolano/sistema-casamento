@@ -44,7 +44,7 @@ $formattedGifts = array_map('formatGiftForDisplay', $paginatedGifts);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
-<body class="pb-5">
+<body class="pt-5">
     <!-- Background Image -->
     <div class="background-image"></div>
 
@@ -60,26 +60,16 @@ $formattedGifts = array_map('formatGiftForDisplay', $paginatedGifts);
             <div class="col-12 col-md-12 col-lg-10 col-xl-8 mx-auto">
                 <!-- Header -->
                 <div class=" shadow-lg mb-4 rounded-4">
-                    <div class="card-body text-center py-3">
-                        <h1 class="couple-names mb-3">
-                            <span class="name-1"><?php echo COUPLE_NAME_1; ?></span>
-                            <span class="heart-icon mx-3">
-                                <i class="fas fa-heart"></i>
-                            </span>
-                            <span class="name-2"><?php echo COUPLE_NAME_2; ?></span>
-                        </h1>
-                        <p class="wedding-date mb-4">
-                            <i class="fas fa-calendar-alt me-2"></i>
-                            <?php echo WEDDING_DATE; ?>
-                        </p>
-                        <h2 class="mb-4 text-white">
+                    <div class="card-body text-center pt-4 pb-2">
+                        <ha class="h4 couple-signature principal mt-3" style="font-size: 2rem !important">Marislan & Douglas</ha>
+                        <h4 class="mb-4 text-white mt-3">
                             <i class="fas fa-gift me-2"></i>
                             Lista de Presentes
-                        </h2>
+                        </h4>
 
                         <!-- Controles -->
-                        <div class="d-flex justify-content-center gap-3 mb-3">
-                            <a href="index.php" class="btn btn-secondary btn-sm">
+                        <div class="d-flex justify-content-center gap-3 mb-3 ">
+                            <a href="index.php" class="btn btn-info btn-sm px-4 py-2 text-white">
                                 <i class="fas fa-arrow-left me-2"></i>
                                 Voltar
                             </a>
@@ -162,22 +152,22 @@ $formattedGifts = array_map('formatGiftForDisplay', $paginatedGifts);
                             <div class="row">
                                 <?php foreach ($formattedGifts as $gift): ?>
                                     <div class="col-12 col-sm-6 col-md-6 col-lg-4 mb-4">
-                                            <div class="card gift-card h-100 ">
-                                                <div class="card-body d-flex flex-column ">
+                                        <div class="card gift-card h-100 ">
+                                            <div class="card-body d-flex flex-column ">
 
-                                                    <!-- Imagem do Presente -->
-                                                    <div class="gift-image <?php echo !empty($gift['imagem_url']) ? 'mb-3' : 'mb-0'; ?> text-center">
-                                                        <?php if (!empty($gift['imagem_url'])): ?>
-                                                            <img src="<?php echo $gift['imagem_url']; ?>" 
-                                                                 alt="<?php echo htmlspecialchars($gift['titulo']); ?>" 
-                                                                 class="gift-product-image">
-                                                        <?php else: ?>
-                                                            <i class="fas fa-gift fa-3x text-primary"></i>
-                                                        <?php endif; ?>
-                                                    </div>
+                                                <!-- Imagem do Presente -->
+                                                <div class="gift-image <?php echo !empty($gift['imagem_url']) ? 'mb-3' : 'mb-0'; ?> text-center">
+                                                    <?php if (!empty($gift['imagem_url'])): ?>
+                                                        <img src="<?php echo $gift['imagem_url']; ?>"
+                                                            alt="<?php echo htmlspecialchars($gift['titulo']); ?>"
+                                                            class="gift-product-image">
+                                                    <?php else: ?>
+                                                        <i class="fas fa-gift fa-3x text-primary"></i>
+                                                    <?php endif; ?>
+                                                </div>
 
-                                                    <!-- Informações do Presente -->
-                                                    <h4 class="card-title text-center"><?php echo htmlspecialchars($gift['titulo']); ?></h4>
+                                                <!-- Informações do Presente -->
+                                                <h4 class="card-title text-center"><?php echo htmlspecialchars($gift['titulo']); ?></h4>
 
                                                 <!-- Preço -->
                                                 <div class="price-section mb-3">
@@ -303,13 +293,13 @@ $formattedGifts = array_map('formatGiftForDisplay', $paginatedGifts);
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    
+
+
 
     <!-- Custom JS -->
     <!-- PIX Functions JS -->
     <script src="assets/js/pix-functions.js"></script>
-    
+
     <!-- Custom JS -->
     <script src="assets/js/main.js"></script>
     <script src="assets/js/music-controller.js"></script>

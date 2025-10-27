@@ -48,49 +48,30 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
                 <div class="row justify-content-center">
                     <div class="col-12 col-md-10 col-lg-10 col-xl-10">
                         <div class="couple-initials mb-4 d-flex flex-column align-items-center justify-content-center gap-3">
-                            <div class="initials-box mb-4">
-                                <div class="feather-icon">
-                                    <i class="fas fa-heart"></i>
-                                </div>
-                                <div class="initials h1 mb-0 d-flex align-items-center justify-content-center gap-2">
-                                    <span>M</span>
-                                    <span style="margin-top: -30px;">.</span>
-                                    <span>D</span>
-                                </div>
-                            </div>
-
-                            <h1 class=" h1 couple-names mb-3 text-white d-flex align-items-center flex-column flex-md-row justify-content-center gap-2">
-                                <span class="name-1">MARISLAN</span>
-                                <span>&</span>
-                                <span class="name-2">DOUGLAS</span>
-                            </h1>
+                            <ha class="h4 couple-signature principal">Marislan & Douglas</ha>
 
                             <!-- Wedding Date -->
-                            <h2 class="h2 wedding-date mb-4  text-white">
-                                13 | 12 | 2025
+                            <h2 class="h2 wedding-date mb-4  text-white d-flex align-items-center" style="font-family: 'Tempting', cursive !important;">
+                                <span>13</span><span style="margin-top:-20px">.</span><span>12</span><span style="margin-top:-20px">.</span><span>25</span>
                             </h2>
 
-                            <!-- Welcome Message -->
-                            <p class="welcome-message mb-4 text-white text-center">
-                                <!-- Mensagem carinhosa para todos os convidados que estão acessando a página -->
-                                <!-- <span class="d-block mb-2" style="font-size: 1.1em; font-weight: 500;">
-                                    Queridos familiares e amigos,
-                                </span> -->
-                                <span class="d-block mb-3" style="line-height: 1.4;font-weight: 700;">
-                                    Se você está aqui, é porque faz parte da nossa história! 💫
-                                    <br>
+                            <div class="d-block mb-3" style=" font-weight: 500; text-shadow: 0px 0px 10px #000;">
+                                <p class="text-center text-white" style="line-height: 1.3;;     font-size: 1.2rem;">Se você está aqui, é porque faz parte da nossa história!</p>
+                                <p class="text-white" style="line-height: 1.3;; text-align: justify;    font-size: 1.2rem;">
+
                                     Amigos e familiares, é com imensa alegria que convidamos vocês para o nosso casamento!
 
                                     Depois de 14 anos juntos, entre risadas, aventuras, desafios e muito amor, percebemos que faltava algo essencial: o sacramento do matrimônio.
                                     <br>
-                                    Mesmo fazendo tudo ao contrário (como sempre foi o nosso estilo 😄), entendemos que chegou o momento de entregar oficialmente nossa união nas mãos de Deus, que sempre foi o centro da nossa caminhada.
+                                    <br>
+                                    Mesmo fazendo tudo ao contrário (como sempre foi o nosso estilo), entendemos que chegou o momento de entregar oficialmente nossa união nas mãos de Deus, que sempre foi o centro da nossa caminhada.
 
-                                    Queremos viver esse dia rodeados de pessoas especiais, porque não teria graça sem a sua presença para tornar tudo ainda mais alegre, abençoado e inesquecível. ❤️
-                                </span>
-                                <span class="d-block" style="font-style: italic; font-weight: 900;">
+                                    Queremos viver este dia rodeados de pessoas especiais, porque não teria graça sem a sua presença para tornar tudo ainda mais alegre, abençoado e inesquecível.
+                                </p>
+                                <p class="d-block  text-white text-center" style="font-style: italic; font-weight: 500;     font-size: 1.2rem; text-shadow: 0px 0px 10px #000;">
                                     Sua presença tornará este dia ainda mais inesquecível.
-                                </span>
-                            </p>
+                                </p>
+                            </div>
 
                         </div>
                     </div>
@@ -178,15 +159,12 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
 
                                         <!-- Botão de Ação -->
                                         <div class="mt-auto d-flex justify-content-center">
-                                            <button class="btn btn-primary w-75 checkout-btn d-flex align-items-center justify-content-center gap-2"
-                                                data-gift-id="<?php echo $gift['id']; ?>"
-                                                data-gift-name="<?php echo htmlspecialchars($gift['titulo']); ?>"
-                                                data-gift-value="<?php echo $gift['valor']; ?>"
-                                                onclick="redirectToCheckout(this, '<?php echo $_SERVER['REQUEST_URI']; ?>')">
+                                            <a href="checkout.php?gift_id=<?php echo $gift['id']; ?>&return_url=<?php echo urlencode($_SERVER['REQUEST_URI']); ?>"
+                                                class="btn btn-primary w-75 checkout-btn d-flex align-items-center justify-content-center gap-2">
                                                 <i class="fas fa-gift me-2"></i>
                                                 <span class="d-none d-md-block">Comprar</span>
                                                 <span class="d-block d-md-none">Comprar</span>
-                                            </button>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -250,6 +228,53 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
     </div>
 
 
+    <!-- Seção Galeria de Fotos -->
+    <section class="gallery-section">
+        <div class="gallery-background">
+            <div class="gallery-overlay"></div>
+            <div class="gallery-content">
+                <div class="play-button-container">
+                    <button class="play-button" id="openGalleryBtn">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <p class="gallery-text">Clique para ver nossas fotos em tela cheia</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Modal de Tela Cheia -->
+    <div class="modal fade" id="fullscreenModal" tabindex="-1" aria-labelledby="fullscreenModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content fullscreen-modal-content">
+                <div class="modal-header fullscreen-modal-header">
+                    <h5 class="modal-title" id="fullscreenModalLabel">
+                        <i class="fas fa-image me-2"></i>
+                        <span id="fullscreenImageTitle">Foto 1 de 5</span>
+                    </h5>
+                    <div class="fullscreen-controls">
+                        <button class="gallery-btn gallery-prev" id="fullscreenPrev">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="gallery-btn gallery-next" id="fullscreenNext">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <button class="gallery-btn gallery-fullscreen" id="exitFullscreen">
+                            <i class="fas fa-compress"></i>
+                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="modal-body fullscreen-modal-body">
+                    <div class="fullscreen-image-container">
+                        <img id="fullscreenImage" src="" alt="Imagem em tela cheia" class="fullscreen-image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Seção Deixe Seu Recado -->
     <div class="container-fluid py-7 gifts-section">
         <div class="row px-3">
@@ -296,6 +321,72 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
         </div>
     </div>
 
+    <!-- Seção da Igreja -->
+    <section class="church-section">
+        <div class="container-fluid p-0">
+            <div class="row g-0">
+                <div class="col-12 col-lg-6">
+                    <div class="church-content">
+                        <div class="church-text">
+                            <h2 class="church-title">Paróquia Nossa Senhora Aparecida</h2>
+                            <p class="church-description">
+                                A Paróquia Nossa Senhora Aparecida em Salto, SP, não é a igreja mais famosa da cidade, que é a Igreja de Nossa Senhora do Monte Serrat.
+                            </p>
+                            <p class="church-description">
+                                A história da "Igrejinha do Salto", como é conhecida, está ligada à fundação da cidade por Antônio Vieira Tavares e a devoção mariana do local, que é um dos maiores pontos turísticos e religiosos de Salto.
+
+                            </p>
+                            <p class="church-description">
+                                A igreja, que foi restaurada em 2021, tem um centro histórico, religioso e cultural que atrai visitantes de todo o Brasil.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="church-image">
+                        <img src="<?php echo base_url('assets/images/foto-igreja.webp') ?>"
+                            alt="Paróquia Nossa Senhora Aparecida"
+                            class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer class="footer-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-10 col-lg-8">
+                    <div class="footer-content text-center">
+                        <div class="footer-icon mb-4">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h3 class="footer-title mb-3">Agradecemos pela visita</h3>
+                        <p class="footer-message mb-4">
+                            E aguardamos essa data tão especial ao lado de vocês,
+                            que fazem parte da nossa história de amor.
+                        </p>
+                        <div class="footer-signature">
+                            <p class="mb-4" style="font-size: 1.8rem;">Com carinho</p>
+                            <h4 class="couple-signature" style="font-size: 2.5rem; font-weight: 500 !important;">Marislan & Douglas</h4>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </footer>
+    <div class="rodape-final container-fluid bg-dark text-white py-3 px-4">
+        <div class="d-flex justify-content-center justify-content-lg-end py-4 gap-2">
+            <span style="font-family: 'Inter', serif;"></span>Desenvolvido por:
+            <a href="https://api.whatsapp.com/send/?phone=5511996271186" class="text-info" target="_blank">
+                <i class="fab fa-whatsapp"></i>
+                Robson Solano
+            </a>
+        </div>
+    </div>
+
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -319,6 +410,126 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
 
     <!-- Custom JS -->
     <script src="assets/js/main.js"></script>
+
+    <!-- Gallery JavaScript -->
+    <script>
+        // Galeria de fotos
+        let currentImageIndex = 0;
+        let galleryImages = [];
+
+        // Carregar imagens da galeria
+        function loadGalleryImages() {
+            // Buscar imagens da API
+            fetch('api/list_gallery_images.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.images.length > 0) {
+                        // Mapear URLs das imagens
+                        galleryImages = data.images.map(img => img.url);
+                    } else {
+                        // Fallback: usar imagem padrão se não houver fotos
+                        galleryImages = ['assets/images/galeria/casal.png'];
+                    }
+                    renderGallery();
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar imagens da galeria:', error);
+                    // Fallback em caso de erro
+                    galleryImages = ['assets/images/galeria/casal.png'];
+                    renderGallery();
+                });
+        }
+
+        // Renderizar galeria (simplificado para tela cheia)
+        function renderGallery() {
+            // Apenas carregar as imagens, não renderizar elementos do modal
+            // As imagens serão exibidas diretamente na tela cheia
+        }
+
+        // Ir para slide específico
+        function goToSlide(index) {
+            currentImageIndex = index;
+        }
+
+        // Próximo slide
+        function nextSlide() {
+            const nextIndex = (currentImageIndex + 1) % galleryImages.length;
+            goToSlide(nextIndex);
+        }
+
+        // Slide anterior
+        function prevSlide() {
+            const prevIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
+            goToSlide(prevIndex);
+        }
+
+        // Abrir tela cheia
+        function openFullscreen() {
+            const fullscreenImage = document.getElementById('fullscreenImage');
+            const fullscreenTitle = document.getElementById('fullscreenImageTitle');
+
+            fullscreenImage.src = galleryImages[currentImageIndex];
+            fullscreenTitle.textContent = `Foto ${currentImageIndex + 1} de ${galleryImages.length}`;
+
+            const fullscreenModal = new bootstrap.Modal(document.getElementById('fullscreenModal'));
+            fullscreenModal.show();
+        }
+
+        // Fechar tela cheia
+        function closeFullscreen() {
+            const fullscreenModal = bootstrap.Modal.getInstance(document.getElementById('fullscreenModal'));
+            if (fullscreenModal) {
+                fullscreenModal.hide();
+            }
+        }
+
+        // Navegar na tela cheia
+        function fullscreenNext() {
+            nextSlide();
+            const fullscreenImage = document.getElementById('fullscreenImage');
+            const fullscreenTitle = document.getElementById('fullscreenImageTitle');
+
+            fullscreenImage.src = galleryImages[currentImageIndex];
+            fullscreenTitle.textContent = `Foto ${currentImageIndex + 1} de ${galleryImages.length}`;
+        }
+
+        function fullscreenPrev() {
+            prevSlide();
+            const fullscreenImage = document.getElementById('fullscreenImage');
+            const fullscreenTitle = document.getElementById('fullscreenImageTitle');
+
+            fullscreenImage.src = galleryImages[currentImageIndex];
+            fullscreenTitle.textContent = `Foto ${currentImageIndex + 1} de ${galleryImages.length}`;
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Carregar imagens da galeria
+            loadGalleryImages();
+
+            // Botão para abrir galeria diretamente em tela cheia
+            document.getElementById('openGalleryBtn').addEventListener('click', function() {
+                openFullscreen();
+            });
+
+
+            // Controles da tela cheia
+            document.getElementById('fullscreenNext').addEventListener('click', fullscreenNext);
+            document.getElementById('fullscreenPrev').addEventListener('click', fullscreenPrev);
+            document.getElementById('exitFullscreen').addEventListener('click', closeFullscreen);
+
+            // Navegação por teclado
+            document.addEventListener('keydown', function(e) {
+                const fullscreenModal = document.getElementById('fullscreenModal');
+
+                if (fullscreenModal.classList.contains('show')) {
+                    if (e.key === 'ArrowRight') fullscreenNext();
+                    if (e.key === 'ArrowLeft') fullscreenPrev();
+                    if (e.key === 'Escape') closeFullscreen();
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

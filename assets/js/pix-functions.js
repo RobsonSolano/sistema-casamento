@@ -67,8 +67,17 @@ window.confirmGift = function() {
         return;
     }
     
-    const donorName = document.getElementById('donorName').value.trim();
-    const donorPhone = document.getElementById('donorPhone').value.trim();
+    const donorNameEl = document.getElementById('donorName');
+    if (!donorNameEl) {
+        if (typeof showNotification !== 'undefined') {
+            showNotification('Erro: Campo de nome não encontrado', 'error');
+        }
+        return;
+    }
+    
+    const donorName = donorNameEl.value.trim();
+    const donorPhoneEl = document.getElementById('donorPhone');
+    const donorPhone = donorPhoneEl ? donorPhoneEl.value.trim() : '';
     
     if (!donorName) {
         if (typeof showNotification !== 'undefined') {
@@ -248,8 +257,15 @@ function savePixAsInitiated() {
         return;
     }
     
-    const donorName = document.getElementById('donorName').value.trim();
-    const donorPhone = document.getElementById('donorPhone').value.trim();
+    const donorNameEl = document.getElementById('donorName');
+    if (!donorNameEl) {
+        console.log('Campo donorName não encontrado');
+        return;
+    }
+    
+    const donorName = donorNameEl.value.trim();
+    const donorPhoneEl = document.getElementById('donorPhone');
+    const donorPhone = donorPhoneEl ? donorPhoneEl.value.trim() : '';
     
     // Verificar se nome foi preenchido
     if (!donorName) {
