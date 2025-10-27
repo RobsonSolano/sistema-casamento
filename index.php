@@ -260,14 +260,19 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
                         <button class="gallery-btn gallery-next" id="fullscreenNext">
                             <i class="fas fa-chevron-right"></i>
                         </button>
-                        <button class="gallery-btn gallery-fullscreen" id="exitFullscreen">
-                            <i class="fas fa-compress"></i>
+                        <button class="btn btn-info" id="exitFullscreen">
+                            SAIR
                         </button>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                 </div>
                 <div class="modal-body fullscreen-modal-body">
                     <div class="fullscreen-image-container">
+                        <div class="gallery-loading" id="galleryLoading">
+                            <div class="spinner-border text-light" role="status">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                        </div>
                         <img id="fullscreenImage" src="" alt="Imagem em tela cheia" class="fullscreen-image">
                     </div>
                 </div>
@@ -419,23 +424,76 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
 
         // Carregar imagens da galeria
         function loadGalleryImages() {
-            // Buscar imagens da API
-            fetch('api/list_gallery_images.php')
-                .then(response => response.json())
+            // Buscar imagens da API usando URL relativa
+            const apiUrl = 'api/list_gallery_images.php';
+            
+            console.log('Tentando carregar galeria de:', apiUrl);
+            
+            fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                },
+                cache: 'no-cache'
+            })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    console.log('Response ok:', response.ok);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    return response.json();
+                })
                 .then(data => {
-                    if (data.success && data.images.length > 0) {
+                    console.log('Dados recebidos:', data);
+                    
+                    if (data.success && data.images && data.images.length > 0) {
                         // Mapear URLs das imagens
                         galleryImages = data.images.map(img => img.url);
+                        console.log('Galeria carregada com', galleryImages.length, 'imagens');
                     } else {
+                        console.warn('Nenhuma imagem encontrada, usando fallback');
                         // Fallback: usar imagem padrão se não houver fotos
-                        galleryImages = ['assets/images/galeria/casal.png'];
+                        galleryImages = ['assets/images/galeria/casal.webp'];
                     }
                     renderGallery();
                 })
                 .catch(error => {
                     console.error('Erro ao carregar imagens da galeria:', error);
-                    // Fallback em caso de erro
-                    galleryImages = ['assets/images/galeria/casal.png'];
+                    console.error('Erro detalhado:', error.message);
+                    
+                    // Fallback em caso de erro: carregar imagens manualmente
+                    console.log('Usando fallback: lista manual de imagens');
+                    galleryImages = [
+                        'assets/images/galeria/Foto (1).png',
+                        'assets/images/galeria/Foto (2).png',
+                        'assets/images/galeria/Foto (3).png',
+                        'assets/images/galeria/Foto (4).png',
+                        'assets/images/galeria/Foto (5).png',
+                        'assets/images/galeria/Foto (6).png',
+                        'assets/images/galeria/Foto (7).png',
+                        'assets/images/galeria/Foto (8).png',
+                        'assets/images/galeria/Foto (9).png',
+                        'assets/images/galeria/Foto (10).png',
+                        'assets/images/galeria/Foto (11).png',
+                        'assets/images/galeria/Foto (12).png',
+                        'assets/images/galeria/Foto (13).png',
+                        'assets/images/galeria/Foto (14).png',
+                        'assets/images/galeria/Foto (15).png',
+                        'assets/images/galeria/Foto (16).png',
+                        'assets/images/galeria/Foto (17).png',
+                        'assets/images/galeria/Foto (18).png',
+                        'assets/images/galeria/Foto (19).png',
+                        'assets/images/galeria/Foto (20).png',
+                        'assets/images/galeria/Foto (21).png',
+                        'assets/images/galeria/Foto (22).png',
+                        'assets/images/galeria/Foto (23).png',
+                        'assets/images/galeria/Foto (24).png',
+                        'assets/images/galeria/Foto (25).png',
+                        'assets/images/galeria/Foto (26).png'
+                    ];
                     renderGallery();
                 });
         }
@@ -463,16 +521,56 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
             goToSlide(prevIndex);
         }
 
+        // Carregar imagem com loading
+        function loadImageWithLoading(imageSrc, callback) {
+            const fullscreenImage = document.getElementById('fullscreenImage');
+            const loadingEl = document.getElementById('galleryLoading');
+            
+            // Mostrar loading
+            loadingEl.classList.add('active');
+            fullscreenImage.classList.add('loading');
+            
+            // Criar nova imagem para pré-carregar
+            const img = new Image();
+            
+            img.onload = function() {
+                // Esconder loading
+                loadingEl.classList.remove('active');
+                fullscreenImage.classList.remove('loading');
+                
+                // Atualizar src da imagem
+                fullscreenImage.src = imageSrc;
+                
+                if (callback) callback();
+            };
+            
+            img.onerror = function() {
+                // Esconder loading mesmo em erro
+                loadingEl.classList.remove('active');
+                fullscreenImage.classList.remove('loading');
+                
+                // Tentar carregar mesmo assim
+                fullscreenImage.src = imageSrc;
+                
+                if (callback) callback();
+            };
+            
+            // Iniciar carregamento
+            img.src = imageSrc;
+        }
+
         // Abrir tela cheia
         function openFullscreen() {
             const fullscreenImage = document.getElementById('fullscreenImage');
             const fullscreenTitle = document.getElementById('fullscreenImageTitle');
 
-            fullscreenImage.src = galleryImages[currentImageIndex];
-            fullscreenTitle.textContent = `Foto ${currentImageIndex + 1} de ${galleryImages.length}`;
-
+            fullscreenTitle.textContent = `${currentImageIndex + 1} de ${galleryImages.length}`;
+            
             const fullscreenModal = new bootstrap.Modal(document.getElementById('fullscreenModal'));
             fullscreenModal.show();
+            
+            // Carregar primeira imagem com loading
+            loadImageWithLoading(galleryImages[currentImageIndex]);
         }
 
         // Fechar tela cheia
@@ -486,20 +584,22 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
         // Navegar na tela cheia
         function fullscreenNext() {
             nextSlide();
-            const fullscreenImage = document.getElementById('fullscreenImage');
             const fullscreenTitle = document.getElementById('fullscreenImageTitle');
 
-            fullscreenImage.src = galleryImages[currentImageIndex];
-            fullscreenTitle.textContent = `Foto ${currentImageIndex + 1} de ${galleryImages.length}`;
+            fullscreenTitle.textContent = `${currentImageIndex + 1} de ${galleryImages.length}`;
+            
+            // Carregar próxima imagem com loading
+            loadImageWithLoading(galleryImages[currentImageIndex]);
         }
 
         function fullscreenPrev() {
             prevSlide();
-            const fullscreenImage = document.getElementById('fullscreenImage');
             const fullscreenTitle = document.getElementById('fullscreenImageTitle');
 
-            fullscreenImage.src = galleryImages[currentImageIndex];
-            fullscreenTitle.textContent = `Foto ${currentImageIndex + 1} de ${galleryImages.length}`;
+            fullscreenTitle.textContent = `${currentImageIndex + 1} de ${galleryImages.length}`;
+            
+            // Carregar imagem anterior com loading
+            loadImageWithLoading(galleryImages[currentImageIndex]);
         }
 
         // Event listeners

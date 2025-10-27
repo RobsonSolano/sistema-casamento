@@ -41,6 +41,9 @@ RewriteRule ^api/update_pix_status/?$ api/update_pix_status.php [L]
 # Rota /api/generate_pix - API para geração de PIX
 RewriteRule ^api/generate_pix/?$ api/generate_pix.php [L]
 
+# Rota /api/list_gallery_images - API para listar imagens da galeria
+RewriteRule ^api/list_gallery_images/?$ api/list_gallery_images.php [L]
+
 # Proteger arquivos sensíveis
 <Files "config.php">
     Order Allow,Deny
