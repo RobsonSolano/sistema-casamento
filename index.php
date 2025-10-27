@@ -41,6 +41,19 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
         Seu navegador não suporta o elemento de áudio.
     </audio>
 
+    <!-- Volume Control Flutuante -->
+    <div class="volume-control-floating" id="volumeControlFloating">
+        <button class="volume-toggle-btn" id="volumeToggleBtn" title="Controle de Volume">
+            <i class="fas fa-volume-up"></i>
+        </button>
+        <div class="volume-slider-container " id="volumeSliderContainer">
+            <div class="d-flex gap-2 align-items-center">
+                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="40">
+                <div class="volume-value" id="volumeValue">40%</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="hero-content w-100">
@@ -426,29 +439,29 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
         function loadGalleryImages() {
             // Buscar imagens da API usando URL relativa
             const apiUrl = 'api/list_gallery_images.php';
-            
+
             console.log('Tentando carregar galeria de:', apiUrl);
-            
+
             fetch(apiUrl, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                },
-                cache: 'no-cache'
-            })
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    cache: 'no-cache'
+                })
                 .then(response => {
                     console.log('Response status:', response.status);
                     console.log('Response ok:', response.ok);
-                    
+
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    
+
                     return response.json();
                 })
                 .then(data => {
                     console.log('Dados recebidos:', data);
-                    
+
                     if (data.success && data.images && data.images.length > 0) {
                         // Mapear URLs das imagens
                         galleryImages = data.images.map(img => img.url);
@@ -463,7 +476,7 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
                 .catch(error => {
                     console.error('Erro ao carregar imagens da galeria:', error);
                     console.error('Erro detalhado:', error.message);
-                    
+
                     // Fallback em caso de erro: carregar imagens manualmente
                     console.log('Usando fallback: lista manual de imagens');
                     galleryImages = [
@@ -525,36 +538,36 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
         function loadImageWithLoading(imageSrc, callback) {
             const fullscreenImage = document.getElementById('fullscreenImage');
             const loadingEl = document.getElementById('galleryLoading');
-            
+
             // Mostrar loading
             loadingEl.classList.add('active');
             fullscreenImage.classList.add('loading');
-            
+
             // Criar nova imagem para pré-carregar
             const img = new Image();
-            
+
             img.onload = function() {
                 // Esconder loading
                 loadingEl.classList.remove('active');
                 fullscreenImage.classList.remove('loading');
-                
+
                 // Atualizar src da imagem
                 fullscreenImage.src = imageSrc;
-                
+
                 if (callback) callback();
             };
-            
+
             img.onerror = function() {
                 // Esconder loading mesmo em erro
                 loadingEl.classList.remove('active');
                 fullscreenImage.classList.remove('loading');
-                
+
                 // Tentar carregar mesmo assim
                 fullscreenImage.src = imageSrc;
-                
+
                 if (callback) callback();
             };
-            
+
             // Iniciar carregamento
             img.src = imageSrc;
         }
@@ -565,10 +578,10 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
             const fullscreenTitle = document.getElementById('fullscreenImageTitle');
 
             fullscreenTitle.textContent = `${currentImageIndex + 1} de ${galleryImages.length}`;
-            
+
             const fullscreenModal = new bootstrap.Modal(document.getElementById('fullscreenModal'));
             fullscreenModal.show();
-            
+
             // Carregar primeira imagem com loading
             loadImageWithLoading(galleryImages[currentImageIndex]);
         }
@@ -587,7 +600,7 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
             const fullscreenTitle = document.getElementById('fullscreenImageTitle');
 
             fullscreenTitle.textContent = `${currentImageIndex + 1} de ${galleryImages.length}`;
-            
+
             // Carregar próxima imagem com loading
             loadImageWithLoading(galleryImages[currentImageIndex]);
         }
@@ -597,7 +610,7 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
             const fullscreenTitle = document.getElementById('fullscreenImageTitle');
 
             fullscreenTitle.textContent = `${currentImageIndex + 1} de ${galleryImages.length}`;
-            
+
             // Carregar imagem anterior com loading
             loadImageWithLoading(galleryImages[currentImageIndex]);
         }
@@ -628,6 +641,53 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
                     if (e.key === 'Escape') closeFullscreen();
                 }
             });
+
+            // Controle de Volume Flutuante
+            const musicElement = document.getElementById('backgroundMusic');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const volumeValue = document.getElementById('volumeValue');
+            const volumeToggleBtn = document.getElementById('volumeToggleBtn');
+
+            if (musicElement && volumeSlider && volumeValue) {
+                // Atualizar volume quando slider mudar
+                volumeSlider.addEventListener('input', function() {
+                    const volume = this.value / 100;
+                    musicElement.volume = volume;
+                    volumeValue.textContent = this.value + '%';
+
+                    // Atualizar ícone baseado no volume
+                    updateVolumeIcon(this.value);
+                });
+
+                // Função para atualizar ícone do botão
+                function updateVolumeIcon(volume) {
+                    const icon = volumeToggleBtn.querySelector('i');
+                    if (volume == 0) {
+                        icon.className = 'fas fa-volume-mute';
+                    } else if (volume < 30) {
+                        icon.className = 'fas fa-volume-down';
+                    } else {
+                        icon.className = 'fas fa-volume-up';
+                    }
+                }
+
+                // Botão toggle mute/unmute
+                volumeToggleBtn.addEventListener('click', function() {
+                    if (musicElement.muted || musicElement.volume === 0) {
+                        musicElement.muted = false;
+                        musicElement.volume = 0.4;
+                        volumeSlider.value = 40;
+                        volumeValue.textContent = '40%';
+                        updateVolumeIcon(40);
+                    } else {
+                        musicElement.muted = true;
+                        updateVolumeIcon(0);
+                    }
+                });
+
+                // Inicializar ícone
+                updateVolumeIcon(40);
+            }
         });
     </script>
 </body>

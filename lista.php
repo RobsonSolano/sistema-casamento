@@ -54,6 +54,19 @@ $formattedGifts = array_map('formatGiftForDisplay', $paginatedGifts);
         Seu navegador não suporta o elemento de áudio.
     </audio>
 
+    <!-- Volume Control Flutuante -->
+    <div class="volume-control-floating" id="volumeControlFloating">
+        <button class="volume-toggle-btn" id="volumeToggleBtn" title="Controle de Volume">
+            <i class="fas fa-volume-up"></i>
+        </button>
+        <div class="volume-slider-container " id="volumeSliderContainer">
+            <div class="d-flex gap-2 align-items-center">
+                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="40">
+                <div class="volume-value" id="volumeValue">40%</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Container -->
     <div class="container-fluid py-4">
         <div class="row">
@@ -321,6 +334,53 @@ $formattedGifts = array_map('formatGiftForDisplay', $paginatedGifts);
                 // Depois implementaremos a funcionalidade completa
                 showNotification('Funcionalidade em desenvolvimento', 'info');
             });
+            
+            // Controle de Volume Flutuante
+            const musicElement = document.getElementById('backgroundMusic');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const volumeValue = document.getElementById('volumeValue');
+            const volumeToggleBtn = document.getElementById('volumeToggleBtn');
+            
+            if (musicElement && volumeSlider && volumeValue) {
+                // Atualizar volume quando slider mudar
+                volumeSlider.addEventListener('input', function() {
+                    const volume = this.value / 100;
+                    musicElement.volume = volume;
+                    volumeValue.textContent = this.value + '%';
+                    
+                    // Atualizar ícone baseado no volume
+                    updateVolumeIcon(this.value);
+                });
+                
+                // Função para atualizar ícone do botão
+                function updateVolumeIcon(volume) {
+                    const icon = volumeToggleBtn.querySelector('i');
+                    if (volume == 0) {
+                        icon.className = 'fas fa-volume-mute';
+                    } else if (volume < 30) {
+                        icon.className = 'fas fa-volume-down';
+                    } else {
+                        icon.className = 'fas fa-volume-up';
+                    }
+                }
+                
+                // Botão toggle mute/unmute
+                volumeToggleBtn.addEventListener('click', function() {
+                    if (musicElement.muted || musicElement.volume === 0) {
+                        musicElement.muted = false;
+                        musicElement.volume = 0.4;
+                        volumeSlider.value = 40;
+                        volumeValue.textContent = '40%';
+                        updateVolumeIcon(40);
+                    } else {
+                        musicElement.muted = true;
+                        updateVolumeIcon(0);
+                    }
+                });
+                
+                // Inicializar ícone
+                updateVolumeIcon(40);
+            }
         });
     </script>
 </body>
