@@ -5,6 +5,11 @@
 let pixInitiated = false;
 let currentCheckoutTransactionId = null;
 
+// Usar a flag global de pix-functions.js (não redeclarar)
+if (typeof window.pixAsInitiatedSaved === 'undefined') {
+    window.pixAsInitiatedSaved = false;
+}
+
 /**
  * Exibe o QR Code (requer nome preenchido)
  */
@@ -26,16 +31,23 @@ window.showQRCode = function() {
     // Salvar como iniciado no checkout
     savePixAsInitiatedInCheckout(donorName);
     
-    // Exibir QR Code
-    document.getElementById('qrCodeButton').style.display = 'none';
-    document.getElementById('qrCodeContainer').style.display = 'block';
+    // Exibir QR Code e ocultar botão
+    const qrCodeButton = document.getElementById('qrCodeButton');
+    const qrCodeContainer = document.getElementById('qrCodeContainer');
+    
+    if (qrCodeButton && qrCodeContainer) {
+        qrCodeButton.style.display = 'none';
+        qrCodeContainer.style.display = 'block';
+    }
 }
 
 /**
  * Salva transação PIX como iniciado no checkout (versão simplificada)
  */
 function savePixAsInitiatedInCheckout(donorName) {
-    if (pixInitiated) {
+    // Verificar se já foi salvo (evita duplicação)
+    if (window.pixAsInitiatedSaved || pixInitiated) {
+        console.log('PIX já foi salvo como iniciado anteriormente');
         return; // Já salvou uma vez
     }
     
@@ -73,6 +85,7 @@ function savePixAsInitiatedInCheckout(donorName) {
         if (data.success) {
             console.log('PIX salvo como iniciado:', data);
             pixInitiated = true;
+            window.pixAsInitiatedSaved = true; // Sincronizar com flag global
             currentCheckoutTransactionId = data.transaction_id;
         }
     })
@@ -133,10 +146,7 @@ $(document).ready(function() {
             return;
         }
         
-        // Salvar como iniciado
-        savePixAsInitiatedInCheckout(donorName);
-        
-        // Usar função original
+        // Usar função original (que já salva como iniciado)
         if (typeof originalCopyPixKey === 'function') {
             originalCopyPixKey();
         }

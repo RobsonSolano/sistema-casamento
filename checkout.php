@@ -164,7 +164,7 @@ $formattedGift = formatGiftForDisplay($gift);
                                             </button>
                                         </div>
                                     </div>
-                                    <div id="qrCodeButton" class="d-flex justify-content-center">
+                                    <div id="qrCodeButton" class="text-center mb-2">
                                         <button class="btn btn-primary btn-lg" type="button" onclick="showQRCode()">
                                             <i class="fas fa-qrcode me-2"></i>
                                             Exibir QR Code

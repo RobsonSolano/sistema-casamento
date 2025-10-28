@@ -6,6 +6,7 @@
 // Variáveis globais para checkout
 let checkoutModal = null;
 let currentPixTransactionId = null; // ID da transação PIX atual
+window.pixAsInitiatedSaved = window.pixAsInitiatedSaved || false; // Flag global para evitar duplicação
 
 /**
  * Redireciona para a página de checkout
@@ -232,8 +233,10 @@ window.copyPixKey = function() {
             showNotification('Chave PIX copiada!', 'success');
         }
         
-        // Salvar como iniciado se ainda não foi salvo
-        savePixAsInitiated();
+        // Salvar como iniciado se ainda não foi salvo (mas sempre exibir notificação)
+        if (!window.pixAsInitiatedSaved) {
+            savePixAsInitiated();
+        }
     }).catch(function(err) {
         // Fallback: selecionar texto
         if (pixKeyEl) {
@@ -244,8 +247,10 @@ window.copyPixKey = function() {
             showNotification('Chave PIX selecionada!', 'info');
         }
         
-        // Salvar como iniciado mesmo no fallback
-        savePixAsInitiated();
+        // Salvar como iniciado mesmo no fallback (mas sempre exibir notificação)
+        if (!window.pixAsInitiatedSaved) {
+            savePixAsInitiated();
+        }
     });
 }
 
@@ -253,6 +258,12 @@ window.copyPixKey = function() {
  * Salva transação PIX como iniciado
  */
 function savePixAsInitiated() {
+    // Verificar se já foi salvo (evita duplicação)
+    if (window.pixAsInitiatedSaved) {
+        console.log('PIX já foi salvo como iniciado anteriormente');
+        return;
+    }
+    
     if (!window.checkoutData) {
         return;
     }
@@ -310,6 +321,8 @@ function savePixAsInitiated() {
             console.log('PIX salvo como iniciado:', data);
             // Armazenar ID da transação para futuras atualizações
             currentPixTransactionId = data.transaction_id;
+            // Marcar como salvo para evitar duplicação
+            window.pixAsInitiatedSaved = true;
             if (typeof showNotification !== 'undefined') {
                 showNotification('Presente iniciado! Agora você pode fazer o PIX.', 'info');
             }
