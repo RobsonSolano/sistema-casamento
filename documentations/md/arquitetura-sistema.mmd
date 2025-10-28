@@ -1,0 +1,202 @@
+%% Arquitetura do Sistema MeuCasamento.com.br SaaS v2.0
+%% Para visualizar: https://mermaid.live ou GitHub
+%% Para converter em PNG: https://mermaid.ink
+
+graph TB
+    subgraph "CAMADA PÚBLICA"
+        LP[Landing Page<br/>meucasamento.com.br]
+        SITE1[Site Casamento 1<br/>maria-joao.meucasamento.com.br]
+        SITE2[Site Casamento 2<br/>pedro-ana.meucasamento.com.br]
+        SITEN[Site Casamento N<br/>*.meucasamento.com.br]
+    end
+
+    subgraph "AUTENTICAÇÃO - CLIENTES"
+        LOGIN_CLIENT[Login Clientes<br/>app.meucasamento.com.br/login]
+        REGISTER[Cadastro Noivos]
+        SESSION_CLIENT[Sessão JWT Cliente]
+        FORGOT_PASS[Recuperar Senha]
+    end
+
+    subgraph "AUTENTICAÇÃO - ADMIN"
+        LOGIN_ADMIN[Login Admin<br/>admin.meucasamento.com.br]
+        SESSION_ADMIN[Sessão JWT Admin]
+        TWO_FACTOR[2FA - Opcional]
+    end
+
+    subgraph "MIDDLEWARE"
+        TENANT[Tenant Resolver<br/>Identifica por subdomain]
+        AUTH_CHECK[Auth Middleware<br/>Valida Token JWT]
+        RBAC[RBAC<br/>Role-Based Access]
+    end
+
+    subgraph "ÁREA DO CLIENTE - NOIVOS"
+        ONBOARD[Wizard Onboarding<br/>5 etapas]
+        DASH_NOIVO[Dashboard Noivo]
+        CRUD_GIFT[CRUD Presentes]
+        VIEW_MSG[Ver Recados]
+        VIEW_PIX[Acompanhar PIX]
+        UPLOAD[Upload Galeria]
+        CUSTOM[Customizar Site]
+        PROFILE[Editar Perfil]
+    end
+
+    subgraph "ÁREA ADMIN - SUPER ADMIN"
+        DASH_MASTER[Dashboard Master<br/>Métricas gerais]
+        MANAGE_TENANT[Gestão Tenants<br/>Ativar/Suspender]
+        MANAGE_TEMPLATE[Gestão Templates<br/>Upload novos]
+        REPORTS[Relatórios Financeiros]
+        MANAGE_ADMIN[Gestão Admins<br/>Criar suporte]
+        COUPONS[Criar Cupons]
+        IMPERSONATE[Login como Cliente]
+    end
+
+    subgraph "CAMADA API REST"
+        API_AUTH[API Auth<br/>Login/Register/Reset]
+        API_GIFT[API Presentes]
+        API_PIX[API PIX]
+        API_MSG[API Recados]
+        API_GALLERY[API Galeria]
+        API_CHECKOUT[API Checkout<br/>Assinaturas]
+        API_PROFILE[API Perfil]
+        API_ADMIN[API Admin<br/>Gestão master]
+    end
+
+    subgraph "CAMADA DE DADOS"
+        DB[(MySQL 8.4<br/>Multi-tenant<br/>18 tabelas)]
+        CACHE[(Redis<br/>Cache sessões/queries)]
+        FILES[Storage Arquivos<br/>S3/Local]
+        QUEUE[(Fila Jobs<br/>Redis Queue)]
+    end
+
+    subgraph "SERVIÇOS EXTERNOS"
+        GATEWAY[Gateway Pagamento<br/>Mercado Pago<br/>API PIX]
+        EMAIL[Serviço Email<br/>SendGrid<br/>Templates]
+        CDN[CDN<br/>Cloudflare<br/>Assets + DDoS]
+        DNS[DNS Manager<br/>Wildcard *.meucasamento]
+        SMS[SMS - Opcional<br/>Twilio<br/>Notificações]
+    end
+
+    subgraph "BACKGROUND JOBS"
+        CRON_EMAIL[Job: Enviar Emails<br/>Fila email_queue]
+        CRON_PIX[Job: Verificar PIX<br/>Poll Gateway cada 5min]
+        CRON_EXPIRE[Job: Expirar Assinaturas<br/>Suspender tenants]
+        CRON_BACKUP[Job: Backup DB<br/>Diário 3AM]
+        CRON_SESSIONS[Job: Limpar Sessões<br/>Expiradas]
+        CRON_LOGIN[Job: Limpar Login Attempts<br/>Mensal]
+    end
+
+    %% Fluxo Landing Page
+    LP -->|Cadastro| REGISTER
+    LP -->|Ver Demos| SITE1
+    REGISTER --> API_AUTH
+    API_AUTH --> DB
+
+    %% Fluxo Sites Públicos
+    SITE1 -->|Lista Presentes| API_GIFT
+    SITE1 -->|Enviar Recado| API_MSG
+    SITE1 -->|Comprar Presente| API_PIX
+    SITE1 -.->|Assets| CDN
+    SITE2 -->|Galeria| API_GALLERY
+    SITEN -.->|Resolve| DNS
+
+    %% Fluxo Auth Clientes
+    LOGIN_CLIENT --> API_AUTH
+    API_AUTH -->|Gera JWT| SESSION_CLIENT
+    SESSION_CLIENT --> AUTH_CHECK
+    AUTH_CHECK --> TENANT
+    TENANT -->|Cliente| RBAC
+    RBAC --> DASH_NOIVO
+    FORGOT_PASS --> API_AUTH
+
+    %% Fluxo Auth Admin
+    LOGIN_ADMIN --> API_AUTH
+    API_AUTH -->|Gera JWT Admin| SESSION_ADMIN
+    SESSION_ADMIN --> AUTH_CHECK
+    AUTH_CHECK -->|Admin| RBAC
+    RBAC --> DASH_MASTER
+    TWO_FACTOR -.->|Opcional| SESSION_ADMIN
+
+    %% Dashboard Noivo
+    DASH_NOIVO --> CRUD_GIFT
+    DASH_NOIVO --> VIEW_MSG
+    DASH_NOIVO --> VIEW_PIX
+    DASH_NOIVO --> UPLOAD
+    DASH_NOIVO --> CUSTOM
+    DASH_NOIVO --> PROFILE
+    PROFILE --> API_PROFILE
+
+    %% Dashboard Master
+    DASH_MASTER --> MANAGE_TENANT
+    DASH_MASTER --> MANAGE_TEMPLATE
+    DASH_MASTER --> REPORTS
+    DASH_MASTER --> MANAGE_ADMIN
+    DASH_MASTER --> COUPONS
+    DASH_MASTER --> IMPERSONATE
+    IMPERSONATE -.->|Assume identidade| DASH_NOIVO
+
+    %% Onboarding Flow
+    REGISTER -->|Novo Usuário| ONBOARD
+    ONBOARD -->|Passo 1-4| CUSTOM
+    CUSTOM -->|Preview OK| API_CHECKOUT
+    API_CHECKOUT -->|Gera PIX| GATEWAY
+    GATEWAY -->|Webhook Confirmação| API_CHECKOUT
+    API_CHECKOUT -->|Ativa Tenant| DB
+
+    %% APIs para Banco
+    API_GIFT --> DB
+    API_PIX --> DB
+    API_MSG --> DB
+    API_GALLERY --> DB
+    API_AUTH --> DB
+    API_CHECKOUT --> DB
+    API_PROFILE --> DB
+    API_ADMIN --> DB
+
+    %% Cache Layer
+    SESSION_CLIENT -.->|Store Token| CACHE
+    SESSION_ADMIN -.->|Store Token| CACHE
+    API_GIFT -.->|Cache Queries| CACHE
+    API_GALLERY -.->|Cache Images| CACHE
+    AUTH_CHECK -.->|Valida Token| CACHE
+
+    %% Storage
+    UPLOAD --> FILES
+    API_GALLERY --> FILES
+    API_CHECKOUT -.->|QR Code| FILES
+
+    %% Serviços Externos
+    API_PIX <-->|Cria PIX dinâmico| GATEWAY
+    API_CHECKOUT <-->|Pagamento Assinatura| GATEWAY
+    CRON_EMAIL -->|SMTP API| EMAIL
+    CRON_PIX <-->|Consulta status| GATEWAY
+    API_AUTH -.->|Email verificação| EMAIL
+    FORGOT_PASS -.->|Email reset| EMAIL
+    SMS -.->|Opcional| CRON_EMAIL
+
+    %% Background Jobs
+    CRON_EMAIL -->|Lê| QUEUE
+    QUEUE <--> DB
+    CRON_PIX --> DB
+    CRON_EXPIRE --> DB
+    CRON_BACKUP -.->|mysqldump| DB
+    CRON_SESSIONS --> DB
+    CRON_LOGIN --> DB
+
+    %% Estilos
+    classDef public fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    classDef auth fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    classDef app fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef api fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef data fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    classDef external fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef jobs fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+    classDef middleware fill:#e0f2f1,stroke:#004d40,stroke-width:2px
+
+    class LP,SITE1,SITE2,SITEN public
+    class LOGIN_CLIENT,REGISTER,SESSION_CLIENT,FORGOT_PASS,LOGIN_ADMIN,SESSION_ADMIN,TWO_FACTOR auth
+    class ONBOARD,DASH_NOIVO,DASH_MASTER,CRUD_GIFT,VIEW_MSG,VIEW_PIX,UPLOAD,CUSTOM,MANAGE_TENANT,MANAGE_TEMPLATE,REPORTS,PROFILE,MANAGE_ADMIN,COUPONS,IMPERSONATE app
+    class API_GIFT,API_PIX,API_MSG,API_GALLERY,API_AUTH,API_CHECKOUT,API_PROFILE,API_ADMIN api
+    class DB,CACHE,FILES,QUEUE data
+    class GATEWAY,EMAIL,CDN,DNS,SMS external
+    class CRON_EMAIL,CRON_PIX,CRON_EXPIRE,CRON_BACKUP,CRON_SESSIONS,CRON_LOGIN jobs
+    class TENANT,AUTH_CHECK,RBAC middleware

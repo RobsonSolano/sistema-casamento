@@ -1,0 +1,341 @@
+%% Diagrama Entidade-Relacionamento (DER)
+%% MeuCasamento.com.br SaaS v2.0
+%% Para visualizar: https://mermaid.live ou GitHub
+
+erDiagram
+    TENANTS ||--o{ USERS : "possui"
+    TENANTS ||--o{ WEDDINGS : "possui"
+    TENANTS ||--o{ SUBSCRIPTIONS : "paga"
+    TENANTS ||--o{ ACTIVITY_LOGS : "registra"
+    TENANTS ||--o{ EMAIL_QUEUE : "envia"
+    
+    USERS ||--|| USER_PROFILES : "tem"
+    USERS ||--o{ SESSIONS : "cria"
+    USERS ||--o{ PASSWORD_RESETS : "solicita"
+    USERS ||--o{ ACTIVITY_LOGS : "executa"
+    
+    ADMIN_USERS ||--o{ ADMIN_USERS : "cria"
+    ADMIN_USERS ||--o{ SESSIONS : "acessa"
+    ADMIN_USERS ||--o{ PASSWORD_RESETS : "recupera"
+    ADMIN_USERS ||--o{ DISCOUNT_CODES : "cria"
+    ADMIN_USERS ||--o{ ACTIVITY_LOGS : "executa"
+    
+    TEMPLATES ||--o{ WEDDINGS : "usa"
+    
+    WEDDINGS ||--o{ PRESENTES : "contém"
+    WEDDINGS ||--o{ PIX_TRANSACTIONS : "recebe"
+    WEDDINGS ||--o{ RECADOS : "recebe"
+    WEDDINGS ||--o{ GALLERY_IMAGES : "possui"
+    WEDDINGS ||--o{ RSVP : "registra"
+    
+    PRESENTES ||--o{ PIX_TRANSACTIONS : "referencia"
+
+    TENANTS {
+        int id PK
+        varchar uuid UK "Identificador único"
+        varchar domain UK "maria-joao.meucasamento.com.br"
+        varchar custom_domain UK "nosso-casamento.com"
+        enum status "active/suspended/cancelled"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    USERS {
+        int id PK
+        int tenant_id FK "Pertence ao tenant"
+        varchar email UK
+        varchar password_hash
+        varchar full_name
+        varchar phone
+        enum role "owner/collaborator"
+        boolean email_verified
+        varchar verification_token
+        boolean is_active
+        timestamp last_login
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    USER_PROFILES {
+        int id PK
+        int user_id FK UK
+        varchar avatar
+        varchar cpf UK "Para nota fiscal"
+        date birth_date
+        enum gender
+        varchar address_zipcode
+        varchar address_street
+        varchar address_number
+        varchar address_city
+        varchar address_state
+        varchar whatsapp
+        varchar instagram
+        varchar facebook
+        json preferences
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    ADMIN_USERS {
+        int id PK
+        varchar email UK
+        varchar password_hash
+        varchar full_name
+        enum role "super_admin/support/financial/developer"
+        json permissions
+        boolean is_active
+        timestamp last_login
+        int created_by FK "Quem criou"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    SESSIONS {
+        bigint id PK
+        int user_id FK "Cliente OU"
+        int admin_user_id FK "Admin"
+        varchar token UK
+        varchar refresh_token UK
+        varchar ip_address
+        text user_agent
+        enum device_type "desktop/mobile/tablet"
+        timestamp expires_at
+        timestamp last_activity
+        boolean is_active
+        timestamp created_at
+    }
+
+    PASSWORD_RESETS {
+        int id PK
+        int user_id FK "Cliente OU"
+        int admin_user_id FK "Admin"
+        varchar email
+        varchar token
+        timestamp expires_at
+        timestamp used_at
+        varchar ip_address
+        timestamp created_at
+    }
+
+    LOGIN_ATTEMPTS {
+        bigint id PK
+        varchar email
+        varchar ip_address
+        text user_agent
+        boolean success
+        varchar failure_reason
+        timestamp attempted_at
+    }
+
+    TEMPLATES {
+        int id PK
+        varchar name
+        varchar slug UK
+        text description
+        varchar preview_image
+        enum category "classic/modern/rustic/elegant"
+        boolean is_active
+        boolean is_premium
+        varchar html_file
+        varchar css_file
+        int sort_order
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    WEDDINGS {
+        int id PK
+        int tenant_id FK
+        int template_id FK
+        varchar bride_name
+        varchar groom_name
+        varchar couple_photo
+        date wedding_date
+        time wedding_time
+        varchar ceremony_location
+        text ceremony_address
+        varchar primary_color
+        varchar secondary_color
+        varchar font_family
+        text welcome_message
+        text love_story
+        boolean show_countdown
+        boolean show_gallery
+        boolean show_gifts
+        boolean show_messages
+        boolean music_enabled
+        varchar pix_key
+        enum pix_key_type
+        varchar pix_recipient_name
+        enum status "draft/published/archived"
+        timestamp published_at
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    SUBSCRIPTIONS {
+        int id PK
+        int tenant_id FK
+        enum plan_type "monthly/upfront/custom"
+        int months_purchased
+        decimal amount_paid
+        decimal discount_amount
+        varchar discount_code
+        date starts_at
+        date expires_at
+        enum payment_method "pix/credit_card/boleto"
+        enum payment_status "pending/paid/failed/refunded"
+        varchar payment_provider
+        varchar payment_provider_id
+        json payment_provider_data
+        timestamp payment_confirmed_at
+        text pix_code
+        text pix_qr_code
+        timestamp pix_expires_at
+        boolean auto_renew
+        text admin_notes
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    PRESENTES {
+        int id PK
+        int wedding_id FK
+        varchar titulo
+        text descricao
+        decimal valor
+        varchar imagem
+        varchar categoria
+        varchar link_loja
+        int quantidade_disponivel
+        int quantidade_comprada
+        enum status "disponivel/reservado/comprado"
+        timestamp reserved_at
+        varchar reserved_by_name
+        varchar reserved_by_phone
+        int display_order
+        timestamp data_criacao
+        timestamp updated_at
+        boolean deletado
+    }
+
+    PIX_TRANSACTIONS {
+        int id PK
+        int wedding_id FK
+        int gift_id FK "NULL para contribuição livre"
+        varchar gift_name
+        decimal amount
+        text pix_code
+        text qr_code_image
+        varchar donor_name
+        varchar donor_email
+        varchar donor_phone
+        text donor_message
+        varchar donor_ip
+        enum status "iniciado/aguardando/confirmado/cancelled/expired"
+        timestamp confirmed_at
+        timestamp expires_at
+        varchar payment_provider
+        varchar payment_provider_txid
+        json payment_provider_data
+        json webhook_data
+        timestamp webhook_received_at
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    RECADOS {
+        int id PK
+        int wedding_id FK
+        varchar nome
+        varchar email
+        text mensagem
+        boolean is_approved
+        boolean is_featured
+        varchar ip_address
+        text user_agent
+        timestamp data_envio
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    GALLERY_IMAGES {
+        int id PK
+        int wedding_id FK
+        varchar filename
+        varchar original_filename
+        varchar file_path
+        int file_size
+        int width
+        int height
+        int display_order
+        text caption
+        boolean is_featured
+        boolean is_cover
+        timestamp uploaded_at
+    }
+
+    RSVP {
+        int id PK
+        int wedding_id FK
+        varchar guest_name
+        varchar guest_email
+        varchar guest_phone
+        enum will_attend "yes/no/maybe"
+        int number_of_guests
+        text dietary_restrictions
+        text message
+        varchar ip_address
+        timestamp confirmed_at
+        timestamp updated_at
+    }
+
+    ACTIVITY_LOGS {
+        bigint id PK
+        int tenant_id FK
+        int user_id FK "Cliente OU Admin"
+        varchar action
+        varchar entity_type
+        int entity_id
+        json old_values
+        json new_values
+        varchar ip_address
+        text user_agent
+        timestamp created_at
+    }
+
+    DISCOUNT_CODES {
+        int id PK
+        varchar code UK
+        varchar description
+        enum discount_type "percentage/fixed"
+        decimal discount_value
+        int max_uses
+        int times_used
+        date valid_from
+        date valid_until
+        boolean is_active
+        int created_by FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    EMAIL_QUEUE {
+        bigint id PK
+        int tenant_id FK
+        varchar to_email
+        varchar to_name
+        varchar subject
+        text body_html
+        text body_text
+        varchar template_name
+        json template_data
+        enum priority "low/normal/high"
+        enum status "pending/sending/sent/failed"
+        int attempts
+        int max_attempts
+        text error_message
+        timestamp sent_at
+        timestamp created_at
+        timestamp updated_at
+    }

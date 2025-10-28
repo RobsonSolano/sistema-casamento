@@ -1,0 +1,103 @@
+%% Arquitetura Simplificada - MeuCasamento SaaS
+
+graph TB
+    subgraph PUBLICA["🌐 CAMADA PÚBLICA"]
+        LP[Landing Page]
+        SITES[Sites Casamentos<br/>*.meucasamento.com.br]
+    end
+
+    subgraph AUTH["🔐 AUTENTICAÇÃO"]
+        LOGIN_CLI[Login Cliente]
+        LOGIN_ADM[Login Admin]
+        JWT[Sessões JWT]
+    end
+
+    subgraph APP_CLI["👰 ÁREA CLIENTE"]
+        ONBOARD[Onboarding]
+        DASH_CLI[Dashboard]
+        GIFTS[Presentes]
+        MSGS[Recados]
+        PIX[Transações]
+    end
+
+    subgraph APP_ADM["⚙️ ÁREA ADMIN"]
+        DASH_ADM[Dashboard Master]
+        TENANTS[Gestão Tenants]
+        TEMPLATES[Gestão Templates]
+    end
+
+    subgraph API["🔌 API REST"]
+        API_AUTH[API Auth]
+        API_GIFTS[API Presentes]
+        API_PIX[API PIX]
+        API_ADMIN[API Admin]
+    end
+
+    subgraph DATA["💾 DADOS"]
+        DB[(MySQL<br/>18 Tabelas)]
+        CACHE[(Redis)]
+        FILES[Storage]
+    end
+
+    subgraph EXTERNAL["🌍 EXTERNOS"]
+        GATEWAY[Mercado Pago<br/>PIX]
+        EMAIL[SendGrid<br/>E-mail]
+        CDN[Cloudflare<br/>CDN]
+    end
+
+    subgraph JOBS["⏰ JOBS"]
+        CRON[Background<br/>Tasks]
+    end
+
+    LP --> LOGIN_CLI
+    LP --> LOGIN_ADM
+    SITES --> API_GIFTS
+    SITES --> API_PIX
+    
+    LOGIN_CLI --> JWT
+    LOGIN_ADM --> JWT
+    JWT --> DASH_CLI
+    JWT --> DASH_ADM
+    
+    DASH_CLI --> GIFTS
+    DASH_CLI --> MSGS
+    DASH_CLI --> PIX
+    
+    DASH_ADM --> TENANTS
+    DASH_ADM --> TEMPLATES
+    
+    ONBOARD --> API_AUTH
+    GIFTS --> API_GIFTS
+    PIX --> API_PIX
+    TENANTS --> API_ADMIN
+    
+    API_AUTH --> DB
+    API_GIFTS --> DB
+    API_PIX --> DB
+    API_ADMIN --> DB
+    
+    API_PIX --> GATEWAY
+    API_AUTH --> EMAIL
+    SITES --> CDN
+    
+    CRON --> DB
+    CRON --> GATEWAY
+    CRON --> EMAIL
+    
+    JWT -.-> CACHE
+    API_GIFTS -.-> CACHE
+
+    classDef public fill:#e1f5ff,stroke:#01579b
+    classDef auth fill:#fff9c4,stroke:#f57f17
+    classDef app fill:#f3e5f5,stroke:#4a148c
+    classDef api fill:#fff3e0,stroke:#e65100
+    classDef data fill:#e8f5e9,stroke:#1b5e20
+    classDef external fill:#fce4ec,stroke:#880e4f
+    
+    class LP,SITES public
+    class LOGIN_CLI,LOGIN_ADM,JWT auth
+    class DASH_CLI,DASH_ADM,ONBOARD,GIFTS,MSGS,PIX,TENANTS,TEMPLATES app
+    class API_AUTH,API_GIFTS,API_PIX,API_ADMIN api
+    class DB,CACHE,FILES data
+    class GATEWAY,EMAIL,CDN external
+

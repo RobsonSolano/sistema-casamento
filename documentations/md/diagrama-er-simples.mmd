@@ -1,0 +1,113 @@
+%% Diagrama ER Simplificado - MeuCasamento SaaS
+%% Apenas estrutura principal
+
+erDiagram
+    TENANTS ||--o{ USERS : possui
+    TENANTS ||--o{ WEDDINGS : possui
+    TENANTS ||--o{ SUBSCRIPTIONS : paga
+    
+    USERS ||--|| USER_PROFILES : tem
+    USERS ||--o{ SESSIONS : cria
+    
+    ADMIN_USERS ||--o{ SESSIONS : acessa
+    ADMIN_USERS ||--o{ DISCOUNT_CODES : cria
+    
+    WEDDINGS ||--o{ PRESENTES : contém
+    WEDDINGS ||--o{ PIX_TRANSACTIONS : recebe
+    WEDDINGS ||--o{ RECADOS : recebe
+    WEDDINGS ||--o{ GALLERY_IMAGES : possui
+    
+    PRESENTES ||--o{ PIX_TRANSACTIONS : gera
+    
+    TEMPLATES ||--o{ WEDDINGS : usa
+
+    TENANTS {
+        int id PK
+        string domain UK
+        string status
+    }
+
+    USERS {
+        int id PK
+        int tenant_id FK
+        string email UK
+        string role
+    }
+
+    ADMIN_USERS {
+        int id PK
+        string email UK
+        string role
+    }
+
+    USER_PROFILES {
+        int id PK
+        int user_id FK
+        string cpf
+        string address
+    }
+
+    SESSIONS {
+        bigint id PK
+        int user_id FK
+        int admin_user_id FK
+        string token UK
+    }
+
+    WEDDINGS {
+        int id PK
+        int tenant_id FK
+        int template_id FK
+        date wedding_date
+        string status
+    }
+
+    SUBSCRIPTIONS {
+        int id PK
+        int tenant_id FK
+        decimal amount_paid
+        date expires_at
+        string payment_status
+    }
+
+    TEMPLATES {
+        int id PK
+        string name
+        string slug UK
+    }
+
+    PRESENTES {
+        int id PK
+        int wedding_id FK
+        string titulo
+        decimal valor
+        string status
+    }
+
+    PIX_TRANSACTIONS {
+        int id PK
+        int wedding_id FK
+        int gift_id FK
+        decimal amount
+        string status
+    }
+
+    RECADOS {
+        int id PK
+        int wedding_id FK
+        string nome
+        text mensagem
+    }
+
+    GALLERY_IMAGES {
+        int id PK
+        int wedding_id FK
+        string filename
+    }
+
+    DISCOUNT_CODES {
+        int id PK
+        int created_by FK
+        string code UK
+    }
+
