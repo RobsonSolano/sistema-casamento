@@ -132,9 +132,9 @@ $formattedGift = formatGiftForDisplay($gift);
                                     </div>
                                     <small class="text-muted">
                                         <i class="fas fa-info-circle me-1"></i> Dados do PIX:<br><br>
-                                        <strong class="text-dark fw-bold">Nome:</strong> Marislan Ribeiro Ferreira<br>
-                                        <strong class="text-dark fw-bold">CPF:</strong> •••.346.368-••<br>
-                                        <strong class="text-dark fw-bold">Banco:</strong> 260 - Nu Pagamentos S.A. - Instituição de Pagamento
+                                        <strong class="text-dark fw-bold">Nome:</strong> Douglas Cassio Fernandes<br>
+                                        <strong class="text-dark fw-bold">CPF:</strong> •••.674.808-••<br>
+                                        <strong class="text-dark fw-bold">Banco:</strong> Caixa Economica Federal
                                     </small>
                                 </div>
                             </div>
@@ -151,7 +151,7 @@ $formattedGift = formatGiftForDisplay($gift);
                                     </p>
                                     <div id="qrCodeContainer" style="display: none;">
                                         <div class="qr-code-display mb-3">
-                                            <img src="assets/images/qr-code-pix.png" alt="QR Code PIX" class="img-fluid" style="max-width: 200px;">
+                                            <img src="assets/images/qr-code.png" alt="QR Code PIX" class="img-fluid" style="max-width: 200px;">
                                         </div>
                                         <div class="input-group mb-3">
                                             <input type="text" class="form-control form-control-sm text-center fw-bold"

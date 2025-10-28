@@ -74,7 +74,7 @@ $formattedGifts = array_map('formatGiftForDisplay', $paginatedGifts);
                 <!-- Header -->
                 <div class=" shadow-lg mb-4 rounded-4">
                     <div class="card-body text-center pt-4 pb-2">
-                        <ha class="h4 couple-signature principal mt-3" style="font-size: 2rem !important">Marislan & Douglas</ha>
+                        <ha class="h4 couple-signature principal mt-3" style="font-size: 2rem !important">Marislan <br class="d-block d-md-none">& <br class="d-block d-md-none">Douglas</ha>
                         <h4 class="mb-4 text-white mt-3">
                             <i class="fas fa-gift me-2"></i>
                             Lista de Presentes

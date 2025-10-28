@@ -215,15 +215,15 @@ try {
                                 <!-- Botões de Ação -->
                                 <div class="d-flex gap-2 mt-3 flex-column flex-lg-row">
                                     <?php if ($transaction['status'] === 'iniciado'): ?>
-                                        <button class="btn btn-warning btn-sm" onclick="updateStatus('<?php echo $transaction['id']; ?>', 'pre_confirmado')">
-                                            <i class="fas fa-check me-1"></i>Marcar como Pré Confirmado
+                                        <button class="btn btn-success btn-sm" onclick="updateStatus('<?php echo $transaction['id']; ?>', 'confirmado')">
+                                            <i class="fas fa-check-double me-1"></i>Confirmar
                                         </button>
                                         <button class="btn btn-danger btn-sm" onclick="updateStatus('<?php echo $transaction['id']; ?>', 'cancelled')">
                                             <i class="fas fa-times me-1"></i>Cancelar
                                         </button>
                                     <?php elseif ($transaction['status'] === 'pre_confirmado'): ?>
                                         <button class="btn btn-success btn-sm" onclick="updateStatus('<?php echo $transaction['id']; ?>', 'confirmado')">
-                                            <i class="fas fa-check-double me-1"></i>Confirmar Definitivamente
+                                            <i class="fas fa-check-double me-1"></i>Confirmar
                                         </button>
                                         <button class="btn btn-secondary btn-sm" onclick="updateStatus('<?php echo $transaction['id']; ?>', 'iniciado')">
                                             <i class="fas fa-undo me-1"></i>Voltar para Iniciado
@@ -231,6 +231,9 @@ try {
                                     <?php elseif ($transaction['status'] === 'confirmado'): ?>
                                         <button class="btn btn-warning btn-sm" onclick="updateStatus('<?php echo $transaction['id']; ?>', 'pre_confirmado')">
                                             <i class="fas fa-undo me-1"></i>Voltar para Pré Confirmado
+                                        </button>
+                                        <button class="btn btn-secondary btn-sm" onclick="updateStatus('<?php echo $transaction['id']; ?>', 'iniciado')">
+                                            <i class="fas fa-undo me-1"></i>Voltar para Iniciado
                                         </button>
                                     <?php endif; ?>
                                 </div>

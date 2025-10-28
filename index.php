@@ -61,7 +61,7 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
                 <div class="row justify-content-center">
                     <div class="col-12 col-md-10 col-lg-10 col-xl-10">
                         <div class="couple-initials mb-4 d-flex flex-column align-items-center justify-content-center gap-3">
-                            <ha class="h4 couple-signature principal">Marislan & Douglas</ha>
+                            <ha class="h4 couple-signature principal">Marislan <br class="d-block d-md-none">& <br class="d-block d-md-none">Douglas</ha>
 
                             <!-- Wedding Date -->
                             <h2 class="h2 wedding-date mb-4  text-white d-flex align-items-center" style="font-family: 'Tempting', cursive !important;">
@@ -250,7 +250,7 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
                     <button class="play-button" id="openGalleryBtn">
                         <i class="fas fa-play"></i>
                     </button>
-                    <p class="gallery-text">Clique para ver nossas fotos em tela cheia</p>
+                    <p class="gallery-text">Clique para ver nossas fotos</p>
                 </div>
             </div>
         </div>
@@ -346,16 +346,19 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
                 <div class="col-12 col-lg-6">
                     <div class="church-content">
                         <div class="church-text">
-                            <h2 class="church-title">Paróquia Nossa Senhora Aparecida</h2>
+                            <h2 class="church-title">💒 Nossa Igreja</h2>
                             <p class="church-description">
-                                A Paróquia Nossa Senhora Aparecida em Salto, SP, não é a igreja mais famosa da cidade, que é a Igreja de Nossa Senhora do Monte Serrat.
+                                Escolhemos celebrar o nosso casamento na Paróquia Nossa Senhora Aparecida, um lugar que carrega um significado muito especial para nós. 💙
+                                Temos uma grande devoção a Nossa Senhora Aparecida, e é sob o seu olhar amoroso que queremos abençoar nossa união e iniciar este novo capítulo de nossas vidas.
                             </p>
                             <p class="church-description">
-                                A história da "Igrejinha do Salto", como é conhecida, está ligada à fundação da cidade por Antônio Vieira Tavares e a devoção mariana do local, que é um dos maiores pontos turísticos e religiosos de Salto.
+                                Atualmente, a Paróquia Nossa Senhora Aparecida está rodeada por aproximadamente 30 mil pessoas e reúne 9 comunidades: Santa Rita de Cássia, Nossa Senhora de Fátima, Nossa Senhora do Cenáculo, São Cristóvão, Santa Ifigênia, Santa Cruz e as duas mais novas, Santa Marta e Santa Terezinha, além de São João Paulo II.
+                                Com alegria, está nascendo ainda a 10ª comunidade, São José, um símbolo de fé e renovação.
+                            </p>
+                            <p class="church-description">
+                                Hoje, a paróquia é conduzida pelo Pe. Luiz Marin, que com dedicação e carinho guia os fiéis e mantém viva a missão de Nossa Senhora Aparecida: acolher, inspirar e fortalecer os corações na fé.
 
-                            </p>
-                            <p class="church-description">
-                                A igreja, que foi restaurada em 2021, tem um centro histórico, religioso e cultural que atrai visitantes de todo o Brasil.
+                                É neste lugar abençoado que diremos “sim” diante de Deus e de todos que amamos. 💍✨
                             </p>
                         </div>
                     </div>
@@ -387,7 +390,7 @@ $formattedPreviewGifts = array_map('formatGiftForDisplay', $previewGifts);
                         </p>
                         <div class="footer-signature">
                             <p class="mb-4" style="font-size: 1.8rem;">Com carinho</p>
-                            <h4 class="couple-signature" style="font-size: 2.5rem; font-weight: 500 !important;">Marislan & Douglas</h4>
+                            <h4 class="couple-signature" style="font-size: 2.5rem; font-weight: 500 !important;">Marislan <br class="d-block d-md-none">& <br class="d-block d-md-none">Douglas</h4>
                         </div>
                     </div>
                 </div>

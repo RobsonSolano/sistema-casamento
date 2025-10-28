@@ -1385,11 +1385,37 @@ body {
 }
 
 .fullscreen-controls .gallery-btn {
-    width: 40px !important;
-    height: 40px !important;
-    min-width: 40px !important;
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
     padding: 0;
     font-size: 0.8rem;
+}
+#fullscreenImageTitle{
+    font-size: 1rem;
+}
+
+#exitFullscreen{
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+}
+
+@media (max-width: 768px) {
+    #fullscreenImageTitle{
+        font-size: 1rem;
+    }
+    .fullscreen-controls .gallery-btn {
+        width: 25px !important;
+        height: 25px !important;
+        min-width: 25px !important;
+        font-size: 0.8rem;
+    }
+
+    #exitFullscreen{
+        font-size: 0.8rem;
+        padding: 0.2rem 1rem;
+    }
+
 }
 
 .fullscreen-modal-body {
@@ -1712,9 +1738,10 @@ body {
 /* Responsive para rodapé */
 @media (max-width: 768px) {
 
-    .couple-signature.principal {
-        font-size: 2.5rem !important;
+    .couple-signature.principal, .couple-signature {
+        font-size: 2.2rem !important;
         text-align: center !important;
+        line-height: 1.5;
     }
 
     .footer-section {
